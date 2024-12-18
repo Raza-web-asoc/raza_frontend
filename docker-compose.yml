@@ -1,0 +1,18 @@
+services:
+  frontend:
+    build:
+      context: .
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_module
+    command: ["npm", "run", "dev", "--", "--host"]
+    stdin_open: true
+    tty: true
+    networks:
+      - autenticador_network
+
+networks:
+  autenticador_network:
+    external: true
