@@ -4,6 +4,7 @@ import Footer from "./components/Footer"
 import Header from "./components/Header"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
+import Profile from "./pages/Profile"
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Routes>
           <Route path="/signin" element={<Login />} />
           <Route path="/signup" element={<Register />} />
+          <Route path="profile" element={<Profile/>} />
         </Routes>
       <Footer />
     </Router>

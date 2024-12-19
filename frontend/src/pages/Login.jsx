@@ -14,7 +14,7 @@ export default function Login() {
 
     try {
       const data = await login(email, password);
-      navigate("/home")
+      navigate("/profile")
     } catch (error) {
       setError(error.message);
     }
