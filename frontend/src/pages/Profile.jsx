@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { profile } from "../services/profileService";
 import { getProfileImage } from "../services/imagesServices/profileImageService";
+import { editProfile } from "../services/profileServices/editProfileService";
 import Pets from "../components/Pets";
 
 export default function Profile() {
@@ -46,6 +47,17 @@ export default function Profile() {
     });
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const data = await editProfile(userInfo.nombres, userInfo.apellidos, userInfo.correo, userInfo.fechaNacimiento, userInfo.genero);
+      console.log("Usuario actualizado:", data);
+    } catch (error) {
+      console.error("Error al actualizar el usuario:", error);
+    }
+  };
+
   return (
     <div className="flex flex-col md:flex-row gap-y-4 md:gap-x-4 p-4 justify-center">
       <div className="w-full md:w-1/4 bg-black p-4 rounded-3xl flex flex-col text-white items-center">
@@ -74,7 +86,7 @@ export default function Profile() {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white rounded-lg p-6 w-96">
             <h2 className="text-xl font-bold mb-4">Editar Información</h2>
-            <form>
+            <form onSubmit={handleSubmit}>
               <label className="block mb-2 text-sm font-medium">
                 Nombres:
                 <input
