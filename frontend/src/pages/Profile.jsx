@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { profile } from "../services/profileService";
 import { getProfileImage } from "../services/imagesServices/profileImageService";
 import { editProfile } from "../services/profileServices/editProfileService";
-import Pets from "../components/Pets";
+import Pets from "../components/PetsProfile";
 
 export default function Profile() {
   const [isModalOpen, setIsModalOpen] = useState(false)

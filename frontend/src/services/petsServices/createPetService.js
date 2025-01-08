@@ -23,3 +23,5 @@ export const createPet= async (nombre_mascota, id_especie, id_raza, sexo, fecha_
     throw new Error("Error al crear la mascota");
   }
 };
+
+

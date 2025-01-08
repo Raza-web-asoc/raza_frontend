@@ -3,11 +3,13 @@ import { getPets } from "../services/petsServices/getPetsService";
 import { createPet } from "../services/petsServices/createPetService";
 import { getBreeds } from "../services/breedServices/getBreedsService";
 import { getSpecies } from "../services/speciesServices/getSpeciesService";
+import { uploadPetImage } from "../services/imagesServices/petImagesService";
 
 export default function Pets() {
   const [pets, setPets] = useState([]);
   const [species, setSpecies] = useState([]);
   const [breeds, setBreeds] = useState([]);
+  const [isLoading, setIsLoading] = useState(true); // Estado para controlar la carga de datos
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newPet, setNewPet] = useState({
     nombre_mascota: "",
@@ -15,7 +17,9 @@ export default function Pets() {
     id_raza: "",
     sexo: "",
     fecha_nacimiento: "",
+    fotos: [], 
   });
+  const [imagePreviews, setImagePreviews] = useState([]); // Estado para almacenar vistas previas de las imágenes
 
   useEffect(() => {
     const fetchPetsAndOptions = async () => {
@@ -23,34 +27,72 @@ export default function Pets() {
         const petsResponse = await getPets();
         const speciesResponse = await getSpecies();
         const breedsResponse = await getBreeds();
-        setPets(petsResponse.data);
-        setSpecies(speciesResponse.data);
-        setBreeds(breedsResponse.data);
+        
+        setPets(petsResponse.data || []); // Verifica que pets tenga datos
+        setSpecies(speciesResponse.data || []); // Verifica que species tenga datos
+        setBreeds(breedsResponse.data || []); // Verifica que breeds tenga datos
       } catch (error) {
         console.error(error.message);
+      } finally {
+        setIsLoading(false); // Al finalizar la carga, cambia el estado de loading a false
       }
     };
+
     fetchPetsAndOptions();
   }, []);
+
+  if (isLoading) {
+    return <p>Cargando mascotas...</p>; // Muestra un mensaje de carga mientras se obtienen los datos
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewPet({ ...newPet, [name]: value });
   };
 
+  const handleFileChange = (e) => {
+    const files = e.target.files;
+    const newPhotos = Array.from(files);
+    setNewPet({ ...newPet, fotos: [...newPet.fotos, ...newPhotos] });
+
+    // Generar vistas previas de las imágenes seleccionadas
+    const previewUrls = [];
+    for (let i = 0; i < files.length; i++) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        previewUrls.push(reader.result);
+        if (previewUrls.length === files.length) {
+          setImagePreviews((prevPreviews) => [...prevPreviews, ...previewUrls]);
+        }
+      };
+      reader.readAsDataURL(files[i]);
+    }
+  };
+
+  const handleRemovePhoto = (index) => {
+    const newPhotos = newPet.fotos.filter((_, i) => i !== index); 
+    const newPreviews = imagePreviews.filter((_, i) => i !== index);
+    setNewPet({ ...newPet, fotos: newPhotos });
+    setImagePreviews(newPreviews);
+  };
+
   const handleSavePet = async (e) => {
     e.preventDefault();
     try {
-      const { nombre_mascota, id_especie, id_raza, sexo, fecha_nacimiento } = newPet;
+      const { nombre_mascota, id_especie, id_raza, sexo, fecha_nacimiento, fotos } = newPet;
+      
       const response = await createPet(nombre_mascota, id_especie, id_raza, sexo, fecha_nacimiento);
-      setPets([...pets, response.data]);
+      await uploadPetImage(response.data.id_mascota, fotos);
+      setPets([...pets, response.data]); // Se agrega la nueva mascota a la lista de mascotas
       setNewPet({
         nombre_mascota: "",
         id_especie: "",
         id_raza: "",
         sexo: "",
         fecha_nacimiento: "",
+        fotos: [],
       });
+      setImagePreviews([]);
       setIsModalOpen(false);
     } catch (error) {
       console.error("Error al guardar mascota:", error);
@@ -61,22 +103,26 @@ export default function Pets() {
     <div className="w-full md:w-1/2 bg-green-200 p-4 rounded">
       <h2 className="text-lg font-bold">Mascotas</h2>
       <div className="flex flex-wrap gap-4">
-        {pets.map((pet) => (
-          <div
-            key={pet.id_mascota}
-            className="relative bg-black text-white p-4 rounded-lg w-full md:w-1/3 flex flex-col"
-          >
-            <div className="flex justify-between items-start mb-4">
-              <p className="text-lg font-bold">{pet.nombre_mascota}</p>
+        {pets && pets.length > 0 ? (
+          pets.map((pet) => (
+            <div
+              key={pet.id_mascota}
+              className="relative bg-black text-white p-4 rounded-lg w-full md:w-1/3 flex flex-col"
+            >
+              <div className="flex justify-between items-start mb-4">
+                <p className="text-lg font-bold">{pet.nombre_mascota}</p>
+              </div>
+              <p>
+                <strong>Especie:</strong> {species.find(s => s.id_especie === pet.id_especie)?.nombre_especie || "Desconocida"}
+              </p>
+              <p>
+                <strong>Raza:</strong> {breeds.find(b => b.id_especie === pet.id_especie && b.id_raza === pet.id_raza)?.nombre_raza || "Desconocida"}
+              </p>
             </div>
-            <p>
-              <strong>Especie:</strong> {species.find(s => s.id_especie === pet.id_especie)?.nombre_especie || "Desconocida"}
-            </p>
-            <p>
-              <strong>Raza:</strong> {breeds.find(b => b.id_especie === pet.id_especie && b.id_raza === pet.id_raza)?.nombre_raza || "Desconocida"}
-            </p>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p>No hay mascotas disponibles.</p>
+        )}
       </div>
       <button
         onClick={() => setIsModalOpen(true)}
@@ -160,6 +206,37 @@ export default function Pets() {
                   required
                 />
               </label>
+              <label className="block mb-2 text-sm font-medium">
+                Fotos:
+                <input
+                  type="file"
+                  name="fotos"
+                  accept="image/*"
+                  className="block w-full p-2 border rounded mt-1"
+                  multiple
+                  onChange={handleFileChange}
+                />
+              </label>
+
+              <div className="mt-4 flex gap-4">
+                {imagePreviews.map((preview, index) => (
+                  <div key={index} className="relative">
+                    <img
+                      src={preview}
+                      alt={`Vista previa ${index + 1}`}
+                      className="w-20 h-20 object-contain rounded"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemovePhoto(index)}
+                      className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                    >
+                      X
+                    </button>
+                  </div>
+                ))}
+              </div>
+
               <div className="flex justify-end gap-4 mt-4">
                 <button
                   type="button"
