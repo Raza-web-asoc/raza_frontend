@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { register } from "../services/signupService";
+import { uploadUserImage } from "../services/imagesServices/profileImageService";
 import { useNavigate } from "react-router-dom";
 
 export default function Register() {
@@ -10,6 +11,7 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [birthday, setBirthday] = useState('');
   const [gender, setGender] = useState('');
+  const [image, setImage] = useState(null);
   const [error, setError] = useState('');
 
   const navigate = useNavigate()
@@ -20,11 +22,19 @@ export default function Register() {
     try {
       const data = await register(username, names, lastNames, email, password, birthday, gender);
       console.log("Usuario registrado:", data);
+      if (image) {
+        await uploadUserImage(data.idUser, image);
+      }
       navigate("/signin");
     } catch (error) {
       setError(error);
       console.error("Error al registrar el usuario:", error);
     }
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setImage(file);
   };
 
   return (
@@ -111,6 +121,14 @@ export default function Register() {
                 <option value="Otro">Bombastik</option>
               </select>
             </div>
+            <div>
+              <label className="text-lg font-medium">Foto de perfil</label>
+              <input
+                type="file"
+                className="w-full border-2 border-gray-100 rounded-xl p-4 mt-1 bg-transparent"
+                onChange={handleImageChange}
+              />
+            </div>
             {error && <p className="text-red-600 mt-2">{error}</p>}
             <div className="mt-8 flex justify-between items-center">
               <button className="font-medium text-base text-violet-600">¿Has olvidado tu contraseña?</button>
@@ -125,8 +143,11 @@ export default function Register() {
             </div>
 
             <div className="mt-8 flex justify-center item-center">
-              <p className="font-medium text-base">¿No tienes una cuenta?</p>
-              <button className="text-violet-600 text-base font-medium ml-2">Registrate</button>
+              <p className="font-medium text-base">¿ya tienes una cuenta?</p>
+              <button
+                className="text-violet-600 text-base font-medium ml-2"
+                onClick={() => navigate("/signin")}
+              >Inicia sesion</button>
             </div>
           </form>
         </div>

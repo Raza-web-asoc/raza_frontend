@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react"
 import { profile } from "../services/profileService";
+import { getProfileImage } from "../services/imagesServices/profileImageService";
+import Pets from "../components/Pets";
 
 export default function Profile() {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -10,6 +12,7 @@ export default function Profile() {
     correo: "",
     genero: "",
     fechaNacimiento: "",
+    foto: ""
   });
 
   useEffect(() => {
@@ -17,12 +20,15 @@ export default function Profile() {
       try {
         const response = await profile();
         const { data } = response;
+        const responseImage = await getProfileImage(data.id_user)
+        const imageUrl = responseImage?.image_url; 
         setUserInfo({
           nombres: data.names,
           apellidos: data.last_names,
           correo: data.email,
           genero: data.gender,
           fechaNacimiento: data.birthday,
+          foto: imageUrl || "https://thumbs.dreamstime.com/b/vector-de-perfil-avatar-predeterminado-foto-usuario-medios-sociales-icono-183042379.jpg"
         });
       } catch (error) {
         console.error(error.message);
@@ -44,7 +50,7 @@ export default function Profile() {
     <div className="flex flex-col md:flex-row gap-y-4 md:gap-x-4 p-4 justify-center">
       <div className="w-full md:w-1/4 bg-black p-4 rounded-3xl flex flex-col text-white items-center">
         <img
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtD5YlDWhxT9GvhYoGuGo67l7cnac6CzZ7XA&s"
+          src={userInfo.foto}
           className="w-40 h-40 rounded-full mb-5"
         />
         <h2 className="text-lg font-bold">Información Personal</h2>
@@ -61,11 +67,8 @@ export default function Profile() {
         </button>
       </div>
 
-      <div className="w-full md:w-1/2 bg-green-200 p-4 rounded">
-        <h2 className="text-lg font-bold">Preferencias</h2>
-        <p>Gustos: Mascotas, Lectura, Programación</p>
-        <p>Idioma: Español</p>
-      </div>
+      {/* Mascotas*/}
+      <Pets />
 
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
