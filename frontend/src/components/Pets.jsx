@@ -1,61 +1,56 @@
 import { useEffect, useState } from "react";
 import { getPets } from "../services/petsServices/getPetsService";
-import { updatePet } from "../services/petsServices/updatePetsService";
+import { createPet } from "../services/petsServices/createPetService";
+import { getBreeds } from "../services/breedServices/getBreedsService";
+import { getSpecies } from "../services/speciesServices/getSpeciesService";
 
 export default function Pets() {
   const [pets, setPets] = useState([]);
+  const [species, setSpecies] = useState([]);
+  const [breeds, setBreeds] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editPet, setEditPet] = useState(null);
   const [newPet, setNewPet] = useState({
-    name: "",
-    breed: "",
-    age: "",
-    gender: "",
+    nombre_mascota: "",
+    id_especie: "",
+    id_raza: "",
+    sexo: "",
+    fecha_nacimiento: "",
   });
 
   useEffect(() => {
-    const fetchPets = async () => {
+    const fetchPetsAndOptions = async () => {
       try {
-        const response = await getPets();
-        const { data } = response;
-        setPets(data);
+        const petsResponse = await getPets();
+        const speciesResponse = await getSpecies();
+        const breedsResponse = await getBreeds();
+        setPets(petsResponse.data);
+        setSpecies(speciesResponse.data);
+        setBreeds(breedsResponse.data);
       } catch (error) {
         console.error(error.message);
       }
     };
-    fetchPets();
+    fetchPetsAndOptions();
   }, []);
 
-  // Manejar cambios en el formulario del modal
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewPet({ ...newPet, [name]: value });
   };
 
-  // Abrir modal para editar mascota
-  const handleEdit = (pet, index) => {
-    setEditPet(index);
-    setNewPet({ ...pet }); // Prellenar el formulario con los datos de la mascota seleccionada
-    setIsModalOpen(true);
-  };
-
-  // Guardar cambios en la mascota
   const handleSavePet = async (e) => {
     e.preventDefault();
     try {
-      if (editPet !== null) {
-        // Actualizar la mascota
-        await updatePet(newPet); // Llamada a la función de actualización
-        const updatedPets = [...pets];
-        updatedPets[editPet] = newPet; // Actualizar la mascota editada
-        setPets(updatedPets);
-      } else {
-        // Agregar nueva mascota
-        await updatePet(newPet); // Llamada a la función para crear la nueva mascota
-        setPets([...pets, newPet]);
-      }
-      setNewPet({ name: "", breed: "", age: "", gender: "" });
-      setEditPet(null);
+      const { nombre_mascota, id_especie, id_raza, sexo, fecha_nacimiento } = newPet;
+      const response = await createPet(nombre_mascota, id_especie, id_raza, sexo, fecha_nacimiento);
+      setPets([...pets, response.data]);
+      setNewPet({
+        nombre_mascota: "",
+        id_especie: "",
+        id_raza: "",
+        sexo: "",
+        fecha_nacimiento: "",
+      });
       setIsModalOpen(false);
     } catch (error) {
       console.error("Error al guardar mascota:", error);
@@ -66,29 +61,19 @@ export default function Pets() {
     <div className="w-full md:w-1/2 bg-green-200 p-4 rounded">
       <h2 className="text-lg font-bold">Mascotas</h2>
       <div className="flex flex-wrap gap-4">
-        {pets.map((pet, index) => (
+        {pets.map((pet) => (
           <div
-            key={index}
+            key={pet.id_mascota}
             className="relative bg-black text-white p-4 rounded-lg w-full md:w-1/3 flex flex-col"
           >
             <div className="flex justify-between items-start mb-4">
               <p className="text-lg font-bold">{pet.nombre_mascota}</p>
-              <button
-                onClick={() => handleEdit(pet, index)}
-                className="bg-gray-700 p-2 rounded-full hover:bg-gray-600"
-                aria-label="Editar mascota"
-              >
-                ✏️
-              </button>
             </div>
             <p>
-              <strong>Nombre:</strong> {pet.nombre_mascota}
+              <strong>Especie:</strong> {species.find(s => s.id_especie === pet.id_especie)?.nombre_especie || "Desconocida"}
             </p>
             <p>
-              <strong>Sexo:</strong> {pet.sexo}
-            </p>
-            <p>
-              <strong>Fecha de nacimiento:</strong> {pet.fecha_nacimiento}
+              <strong>Raza:</strong> {breeds.find(b => b.id_especie === pet.id_especie && b.id_raza === pet.id_raza)?.nombre_raza || "Desconocida"}
             </p>
           </div>
         ))}
@@ -103,52 +88,77 @@ export default function Pets() {
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white rounded-lg p-6 w-96">
-            <h2 className="text-xl font-bold mb-4">
-              {editPet !== null ? "Editar Mascota" : "Registrar Mascota"}
-            </h2>
+            <h2 className="text-xl font-bold mb-4">Registrar Mascota</h2>
             <form onSubmit={handleSavePet}>
               <label className="block mb-2 text-sm font-medium">
                 Nombre:
                 <input
                   type="text"
-                  name="name"
+                  name="nombre_mascota"
                   className="block w-full p-2 border rounded mt-1"
                   value={newPet.nombre_mascota}
                   onChange={handleChange}
+                  required
                 />
+              </label>
+              <label className="block mb-2 text-sm font-medium">
+                Especie:
+                <select
+                  name="id_especie"
+                  className="block w-full p-2 border rounded mt-1"
+                  value={newPet.id_especie}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Seleccionar</option>
+                  {species.map((specie) => (
+                    <option key={specie.id_especie} value={specie.id_especie}>
+                      {specie.nombre_especie}
+                    </option>
+                  ))}
+                </select>
               </label>
               <label className="block mb-2 text-sm font-medium">
                 Raza:
-                <input
-                  type="text"
-                  name="breed"
-                  className="block w-full p-2 border rounded mt-1"
-                  value={newPet.raza}
-                  onChange={handleChange}
-                />
-              </label>
-              <label className="block mb-2 text-sm font-medium">
-                Fecha de nacimiento:
-                <input
-                  type="number"
-                  name="age"
-                  className="block w-full p-2 border rounded mt-1"
-                  value={newPet.fecha_nacimiento}
-                  onChange={handleChange}
-                />
-              </label>
-              <label className="block mb-2 text-sm font-medium">
-                Género:
                 <select
-                  name="gender"
+                  name="id_raza"
+                  className="block w-full p-2 border rounded mt-1"
+                  value={newPet.id_raza}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Seleccionar</option>
+                  {breeds.map((breed) => (
+                    <option key={breed.id_raza} value={breed.id_raza}>
+                      {breed.nombre_raza}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="block mb-2 text-sm font-medium">
+                Sexo:
+                <select
+                  name="sexo"
                   className="block w-full p-2 border rounded mt-1"
                   value={newPet.sexo}
                   onChange={handleChange}
+                  required
                 >
                   <option value="">Seleccionar</option>
-                  <option value="Macho">Macho</option>
-                  <option value="Hembra">Hembra</option>
+                  <option value="M">Macho</option>
+                  <option value="F">Hembra</option>
                 </select>
+              </label>
+              <label className="block mb-2 text-sm font-medium">
+                Fecha de Nacimiento:
+                <input
+                  type="date"
+                  name="fecha_nacimiento"
+                  className="block w-full p-2 border rounded mt-1"
+                  value={newPet.fecha_nacimiento}
+                  onChange={handleChange}
+                  required
+                />
               </label>
               <div className="flex justify-end gap-4 mt-4">
                 <button
