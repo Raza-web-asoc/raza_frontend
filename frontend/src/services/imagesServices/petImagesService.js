@@ -8,7 +8,7 @@ export const uploadPetImage = async (idPet, images) => {
   });
 
   try {
-    await axios.post("http://localhost/api/upload-pet-images", formData, {
+    await axios.post("http://localhost:8002/upload-pet-images", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
