@@ -1,28 +1,73 @@
-
-import choosePetModal from '../components/Match/ChoosePet.jsx';
-import { useState } from 'react';
+import ChoosePetModal from '../components/Match/ChoosePet.jsx';
+import { getPets } from '../services/petsServices/getPetsService';
+import { useState, useEffect } from 'react';
+import { profile } from "../services/profileService.js";
+import CardPetMatch from "../components/Match/CardPetMatch.jsx";
 
 export default function Match() {
-
-    const [animals, setAnimals] = useState([]);
+    const [animals, setAnimals] = useState([]);  // Usamos animals para mantener las mascotas
+    const [currentIndex, setCurrentIndex] = useState(0); // Índice para el animal actual
     const [petSelected, setPetSelected] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(true);
 
     const handleCloseModal = () => {
-        setIsModalOpen(false);
+        if (petSelected) {
+            setIsModalOpen(false);
+        }
     };
 
+    const handleLikeDislike = () => {
+        // Aumentamos el índice para pasar a la siguiente mascota
+        if (currentIndex < animals.length ) {
+            setCurrentIndex(currentIndex + 1);
+        } else {
+            console.log('No hay más mascotas');
+        }
+    };
+
+    useEffect(() => {
+        const fetchAnimals = async () => {
+            try {
+                const { data } = await profile();
+                const pets = await getPets();
+                setAnimals(pets.data || []);
+            } catch (error) {
+                setAnimals([]);
+                console.error(error);
+
+            }
+        };
+
+        fetchAnimals();
+    }, []);
 
     return (
         <div>
             {isModalOpen && (
-                <div className="modal">
-                    <div className="modal-content">
-                        <h2>Elige una mascota</h2>
-                        <button onClick={handleCloseModal}>Cerrar</button>
+                <ChoosePetModal
+                    handleCloseModal={handleCloseModal}
+                    petSelected={petSelected}
+                    setPetSelected={setPetSelected}
+                />
+            )}
+
+            {!isModalOpen && (
+                <div className="h-full min-w-full flex justify-center items-center">
+                    <div className="px-32 py-32 space-x-3 flex">
+                        {animals.length > 0 && currentIndex < animals.length ? (
+                            <div className="animal-item">
+                                <CardPetMatch
+                                    pet={animals[currentIndex]}
+                                    petSelected={petSelected}
+                                    handleLikeDislike={handleLikeDislike}
+                                />
+                            </div>
+                        ) : (
+                            <p>No se encontraron mascotas.</p>
+                        )}
                     </div>
                 </div>
             )}
         </div>
-    )
+    );
 }

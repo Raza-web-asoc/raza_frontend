@@ -1,22 +1,26 @@
 
-const cardPet = ({ pet }) => {
+const CardPet = ({ pet }) => {
+
+
+    const petPhoto = pet.foto ? pet.foto : "https://thumbs.dreamstime.com/b/vector-de-perfil-avatar-predeterminado-foto-usuario-medios-sociales-icono-183042379.jpg";
 
     return (
-        <div className="bg-white shadow rounded-lg p-4">
+        <div className=" w-32 h-full bg-black text-white rounded-xl">
             <img
-                src={pet.foto}
+                src={petPhoto}
                 alt={pet.nombre_mascota}
-                className="w-full h-48 object-cover rounded-lg"
+                className=" w-32 h-32 object-cover rounded-lg mx-auto"
             />
-
-            <p className="text-lg font-bold">{pet.nombre_mascota}</p>
-            <p>
-                <strong>Especie:</strong> {pet.nombre_especie}
-            </p>
-            <p>
-                <strong>Raza:</strong> {pet.nombre_raza}
-            </p>
+            <div className="p-3">
+                <p className="text-lg font-bold">{pet.nombre_mascota}</p>
+                <p>
+                    <strong>Especie:</strong> {pet.nombre_especie+"asdsa"}
+                </p>
+                <p>
+                    <strong>Raza:</strong> {pet.nombre_raza}
+                </p>
+            </div>
         </div>
     );
 }
-export default cardPet;
+export default CardPet;

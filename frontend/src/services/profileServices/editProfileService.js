@@ -21,7 +21,6 @@ export const editProfile = async (names, last_names, email, birthday, gender) =>
         }
       }
     );
-    console.log(response);
     return response;
   } catch (error) {
     console.error(error);

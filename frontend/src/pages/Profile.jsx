@@ -8,6 +8,7 @@ export default function Profile() {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const [userInfo, setUserInfo] = useState({
+    id: "",
     nombres: "",
     apellidos: "",
     correo: "",
@@ -24,6 +25,7 @@ export default function Profile() {
         const responseImage = await getProfileImage(data.id_user)
         const imageUrl = responseImage?.image_url; 
         setUserInfo({
+          id: data.id_user,
           nombres: data.names,
           apellidos: data.last_names,
           correo: data.email,
@@ -80,7 +82,7 @@ export default function Profile() {
       </div>
 
       {/* Mascotas*/}
-      <Pets />
+      <Pets userId={userInfo.id}/>
 
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
