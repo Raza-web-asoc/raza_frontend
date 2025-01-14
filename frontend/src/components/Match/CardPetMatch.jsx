@@ -1,4 +1,5 @@
 import {createMatch} from "../../services/matchsServices/createMatchService.js";
+import { createChat } from "../../services/chatsServices/createChatsService.js";
 
 const CardPetMatch = ({ pet, petSelected, handleLikeDislike }) => {
 
@@ -11,11 +12,15 @@ const CardPetMatch = ({ pet, petSelected, handleLikeDislike }) => {
         try{
 
 
-            const response = await createMatch({
+            const responseMatch = await createMatch({
                 idmascota1: petSelected.id_mascota,
                 idmascota2: pet.id_mascota,
                 match: 1
             });
+            const responseChat = await createChat(petSelected.id_mascota, 
+                pet.id_mascota
+            );
+            
             alert("Match creado. Ya puedes hablar con el dueño a traves del chat");
         }catch (error){
             console.error(error);

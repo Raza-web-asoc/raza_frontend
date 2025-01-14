@@ -19,6 +19,29 @@ export const getPets = async () => {
   }
 };
 
+export const getPetById = async (pet_id) => {
+  if (!pet_id) {
+    throw new Error("id de la mascota no proporcionada");
+  }
+
+  const token = localStorage.getItem("access_token");
+  if (!token) {
+    throw new Error("Token no encontrado");
+  }
+  try {
+    const response = await axios.get(`http://localhost/api/pets/mascotas/${pet_id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    return response;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Usuario o contraseña incorrecta");
+  }
+};
+
 export const getPetsByUser = async (usuario_id) => {
   if (!usuario_id) {
     throw new Error("usuario_id no proporcionado");
