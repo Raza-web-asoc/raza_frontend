@@ -4,6 +4,9 @@ import { createPet } from "../services/petsServices/createPetService";
 import { getBreeds } from "../services/breedServices/getBreedsService";
 import { getSpecies } from "../services/speciesServices/getSpeciesService";
 import { uploadPetImage } from "../services/imagesServices/petImagesService";
+import { getPetImages } from "../services/imagesServices/petImagesService";
+import { profile } from "../services/profileService";
+import { getPetsByUser } from "../services/petsServices/getPetsService";
 
 export default function Pets() {
   const [pets, setPets] = useState([]);
@@ -11,35 +14,74 @@ export default function Pets() {
   const [breeds, setBreeds] = useState([]);
   const [isLoading, setIsLoading] = useState(true); // Estado para controlar la carga de datos
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [petImages, setPetImages] = useState([])
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [newPet, setNewPet] = useState({
     nombre_mascota: "",
     id_especie: "",
     id_raza: "",
     sexo: "",
     fecha_nacimiento: "",
-    fotos: [], 
+    fotos: [],
   });
   const [imagePreviews, setImagePreviews] = useState([]); // Estado para almacenar vistas previas de las imágenes
 
   useEffect(() => {
     const fetchPetsAndOptions = async () => {
       try {
-        const petsResponse = await getPets();
+        const { data } = await profile();
+        const petsResponse = await getPetsByUser(data.id_user);
         const speciesResponse = await getSpecies();
         const breedsResponse = await getBreeds();
-        
-        setPets(petsResponse.data || []); // Verifica que pets tenga datos
-        setSpecies(speciesResponse.data || []); // Verifica que species tenga datos
-        setBreeds(breedsResponse.data || []); // Verifica que breeds tenga datos
+
+        setPets(petsResponse || []);
+        setSpecies(speciesResponse.data || []);
+        setBreeds(breedsResponse.data || []);
+  
+        const imagesPromises = petsResponse.map(async (pet) => {
+          try {
+            const response = await getPetImages(pet.id_mascota);
+            console.log(`Mascota ${pet.id_mascota} imágenes:`, response);
+            return { [pet.id_mascota]: response.images || [] };
+          } catch {
+            return { [pet.id_mascota]: [] };
+          }
+        });
+  
+        const imagesResults = await Promise.all(imagesPromises);
+        const imagesMap = Object.assign({}, ...imagesResults);
+        console.log("Mapa de imágenes cargado:", imagesMap);
+        setPetImages(imagesMap);
+  
+        const initialIndexes = Object.keys(imagesMap).reduce((acc, petId) => {
+          acc[petId] = 0;
+          return acc;
+        }, {});
+        setCurrentImageIndex(initialIndexes);
       } catch (error) {
         console.error(error.message);
       } finally {
-        setIsLoading(false); // Al finalizar la carga, cambia el estado de loading a false
+        setIsLoading(false);
       }
     };
-
+  
     fetchPetsAndOptions();
   }, []);
+
+  const handleNextImage = (petId) => {
+    setCurrentImageIndex((prev) => ({
+      ...prev,
+      [petId]: (prev[petId] + 1) % petImages[petId].length,
+    }));
+  };
+
+  const handlePreviousImage = (petId) => {
+    setCurrentImageIndex((prev) => ({
+      ...prev,
+      [petId]:
+        (prev[petId] - 1 + petImages[petId].length) % petImages[petId].length,
+    }));
+  };
 
   if (isLoading) {
     return <p>Cargando mascotas...</p>; // Muestra un mensaje de carga mientras se obtienen los datos
@@ -70,7 +112,7 @@ export default function Pets() {
   };
 
   const handleRemovePhoto = (index) => {
-    const newPhotos = newPet.fotos.filter((_, i) => i !== index); 
+    const newPhotos = newPet.fotos.filter((_, i) => i !== index);
     const newPreviews = imagePreviews.filter((_, i) => i !== index);
     setNewPet({ ...newPet, fotos: newPhotos });
     setImagePreviews(newPreviews);
@@ -80,7 +122,7 @@ export default function Pets() {
     e.preventDefault();
     try {
       const { nombre_mascota, id_especie, id_raza, sexo, fecha_nacimiento, fotos } = newPet;
-      
+
       const response = await createPet(nombre_mascota, id_especie, id_raza, sexo, fecha_nacimiento);
       await uploadPetImage(response.data.id_mascota, fotos);
       setPets([...pets, response.data]); // Se agrega la nueva mascota a la lista de mascotas
@@ -118,6 +160,33 @@ export default function Pets() {
               <p>
                 <strong>Raza:</strong> {breeds.find(b => b.id_especie === pet.id_especie && b.id_raza === pet.id_raza)?.nombre_raza || "Desconocida"}
               </p>
+
+              {/* Sección de imágenes */}
+              {petImages[pet.id_mascota]?.length > 0 ? (
+                <div className="mt-4">
+                  <div className="relative">
+                    <img
+                      src={petImages[pet.id_mascota][currentImageIndex[pet.id_mascota]]}
+                      alt={`Imagen de ${pet.nombre_mascota}`}
+                      className="w-full h-48 object-contain rounded"
+                    />
+                    <button
+                      onClick={() => handlePreviousImage(pet.id_mascota)}
+                      className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-300 text-black rounded-full p-2 hover:bg-gray-400"
+                    >
+                      &lt;
+                    </button>
+                    <button
+                      onClick={() => handleNextImage(pet.id_mascota)}
+                      className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-300 text-black rounded-full p-2 hover:bg-gray-400"
+                    >
+                      &gt;
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <p className="mt-4">No hay imágenes disponibles.</p>
+              )}
             </div>
           ))
         ) : (

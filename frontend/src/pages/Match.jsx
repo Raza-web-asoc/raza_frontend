@@ -3,6 +3,7 @@ import { getPets } from '../services/petsServices/getPetsService';
 import { useState, useEffect } from 'react';
 import { profile } from "../services/profileService.js";
 import CardPetMatch from "../components/Match/CardPetMatch.jsx";
+import { getPetsByUser } from '../services/petsServices/getPetsService';
 
 export default function Match() {
     const [animals, setAnimals] = useState([]);  // Usamos animals para mantener las mascotas
@@ -29,8 +30,12 @@ export default function Match() {
         const fetchAnimals = async () => {
             try {
                 const { data } = await profile();
-                const pets = await getPets();
-                setAnimals(pets.data || []);
+                const allPets = await getPets();
+                const ownPets = await getPetsByUser(data.id_user);
+                const allPets_data = allPets.data;
+                const pets = allPets_data.filter(item1 => !ownPets.some(item2 => item2.id_mascota === item1.id_mascota));
+                console.log("PETS:",pets)
+                setAnimals(pets || []);
             } catch (error) {
                 setAnimals([]);
                 console.error(error);
