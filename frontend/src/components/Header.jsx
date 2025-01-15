@@ -5,9 +5,10 @@ export default function Header() {
 				<h1 className="text-2xl font-bold">Raza</h1>
 				<nav>
 					<ul className="flex space-x-4">
-						<li><a href="#" className="hover:text-gray-300">Inicio</a></li>
-						<li><a href="#" className="hover:text-gray-300">Servicios</a></li>
-						<li><a href="#" className="hover:text-gray-300">Contacto</a></li>
+						<li><a href="/signin" className="hover:text-gray-300">Iniciar sesión</a></li>
+						<li><a href="/signup" className="hover:text-gray-300">Registrarse</a></li>
+						<li><a href="/profile" className="hover:text-gray-300">Perfil</a></li>
+						<li><a href="/match" className="hover:text-gray-300">Match</a></li>
 					</ul>
 				</nav>
 			</div>
