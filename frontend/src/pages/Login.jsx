@@ -13,7 +13,7 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      const data = await login(email, password);
+      await login(email, password);
       navigate("/profile")
     } catch (error) {
       setError(error.message);

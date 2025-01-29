@@ -1,20 +1,24 @@
-import axios from "axios";
+import { gql } from '@apollo/client';
+import client from '../apolloClient';
 
 export const login = async (username, password) => {
-  try {
-    const response = await axios.post("http://localhost/api/signin", new URLSearchParams({
-      username: username,
-      password: password
-    }), {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
+  const LOGIN_MUTATION = gql`
+    mutation signin($input: LoginInput!) {
+      signin(input: $input) {
+        access_token
       }
-    });
-    
-    const {access_token} = response.data
-    localStorage.setItem("access_token", access_token)
+    }
+  `;
 
+  try {
+    const { data } = await client.mutate({
+      mutation: LOGIN_MUTATION,
+      variables: { input: { username, password } },
+    });
+
+    const { access_token } = data.signin;
+    localStorage.setItem('access_token', access_token);
   } catch (error) {
-    throw new Error("Usuario o contraseña incorrecta");
+    throw new Error('Usuario o contraseña incorrecta:', error);
   }
 };
