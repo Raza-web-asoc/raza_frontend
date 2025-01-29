@@ -20,8 +20,7 @@ export default function Profile() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await profile();
-        const { data } = response;
+        const data = await profile();
         const responseImage = await getProfileImage(data.id_user)
         const imageUrl = responseImage?.image_url; 
         setUserInfo({

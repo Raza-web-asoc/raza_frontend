@@ -29,11 +29,11 @@ export default function Pets() {
   useEffect(() => {
     const fetchPetsAndOptions = async () => {
       try {
-        const { data } = await profile();
+        const data  = await profile();
         const petsResponse = await getPetsByUser(data.id_user);
         const speciesResponse = await getSpecies();
         const breedsResponse = await getBreeds();
-
+        console.log("Mascotas cargadas:", petsResponse);
         setPets(petsResponse || []);
         setSpecies(speciesResponse.data || []);
         setBreeds(breedsResponse.data || []);
