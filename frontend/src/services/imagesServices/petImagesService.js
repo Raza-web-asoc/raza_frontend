@@ -21,19 +21,17 @@ export const uploadPetImage = async (idPet, images) => {
 };
 
 export const getPetImages = async (idPet) => {
-  const formData = new FormData();
-  formData.append("idPet", idPet);
-
   try {
-    const response = await axios.post("http://localhost/api/get-pet-images", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+    // Realiza la solicitud GET con el parámetro idPet en la URL
+    const response = await axios.get("http://localhost/api/get-pet-images", {
+      params: { idPet }, // Enviar idPet como query parameter
     });
-    console.log("Imagenes de mascota obtenidas:" , response);
+
+    console.log("Imagenes de mascota obtenidas:", response);
     return response.data;
   } catch (error) {
     console.error("Error al obtener las imagenes de la mascota:", error);
     throw new Error("Error al obtener las imagenes de la mascota");
   }
 };
+

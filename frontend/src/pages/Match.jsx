@@ -17,7 +17,7 @@ export default function Match() {
         }
     };
 
-    const handleLikeDislike = () => {
+    const nextPet = () => {
         // Aumentamos el índice para pasar a la siguiente mascota
         if (currentIndex < animals.length ) {
             setCurrentIndex(currentIndex + 1);
@@ -64,7 +64,7 @@ export default function Match() {
                                 <CardPetMatch
                                     pet={animals[currentIndex]}
                                     petSelected={petSelected}
-                                    handleLikeDislike={handleLikeDislike}
+                                    nextPet={nextPet}
                                 />
                             </div>
                         ) : (

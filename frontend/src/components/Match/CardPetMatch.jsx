@@ -1,11 +1,12 @@
-import {createMatch} from "../../services/matchsServices/createMatchService.js";
+import { handleSwipe} from "../../services/matchsServices/createMatchService.js";
 import { createChat } from "../../services/chatsServices/createChatsService.js";
 import { getPetImages } from "../../services/imagesServices/petImagesService";
 import { useEffect, useState } from "react";
 
-const CardPetMatch = ({ pet, petSelected, handleLikeDislike }) => {
+const CardPetMatch = ({ pet, petSelected, nextPet }) => {
 
     const [petImages, setPetImages] = useState([]);
+    const [likeOrDislike, setLikeOrDislike] = useState("");
 
     useEffect(() => {
         const fetchPetImages = async () => {
@@ -25,34 +26,34 @@ const CardPetMatch = ({ pet, petSelected, handleLikeDislike }) => {
     const petPhoto = petImages.length > 0 ? petImages[0] : "https://thumbs.dreamstime.com/b/vector-de-perfil-avatar-predeterminado-foto-usuario-medios-sociales-icono-183042379.jpg";
     
 
-    const sendMatchToPetLike = async (pet) => {
-        // Aquí hacemos el match y hacemos el registro en la BD
-        console.log("Like", pet.nombre_mascota);
+    const handleLikeOrDislikeButton = async (pet,type_interaccion) => {
+
         try{
-
-
-            const responseMatch = await createMatch({
-                idmascota1: petSelected.id_mascota,
-                idmascota2: pet.id_mascota,
-                match: 1
+            const responseMatch = await handleSwipe({
+                id_mascota1: petSelected.id_mascota,
+                id_mascota2: pet.id_mascota,
+                tipo_interaccion: type_interaccion
             });
-            const responseChat = await createChat(petSelected.id_mascota, 
-                pet.id_mascota
-            );
-            
-            alert("Match creado. Ya puedes hablar con el dueño a traves del chat");
+            // ver si en el body de la respuesta dice si existe la propiedad match y si es un true
+            if(responseMatch.data.match){
+                alert("Match creado. Ya puedes hablar con el dueño a traves del chat");
+                const responseChat = await createChat(petSelected.id_mascota,
+                    pet.id_mascota
+                );
+            }else{
+                alert("Espera a que la otra persona también de like");
+            }
+
+
+
         }catch (error){
             console.error(error);
         }
 
-        handleLikeDislike(); // Avanzamos al siguiente animal
+        nextPet();
     }
 
-    const sendMatchToPetDislike = async (pet) => {
-        // Aquí hacemos el no-match y hacemos el registro en la BD
-        console.log("Dislike", pet.nombre_mascota);
-        handleLikeDislike(); // Avanzamos al siguiente animal
-    }
+
 
     return (
         <div className="w-96 rounded-xl h-max bg-black text-white">
@@ -83,7 +84,9 @@ const CardPetMatch = ({ pet, petSelected, handleLikeDislike }) => {
                     <div className="text-center">
                         <button
                             className="bg-red-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-                            onClick={() => sendMatchToPetDislike(pet)}
+                            onClick={() => {
+                                handleLikeOrDislikeButton(pet,"dislike");
+                            }}
                         >
                             Dislike
                         </button>
@@ -91,7 +94,10 @@ const CardPetMatch = ({ pet, petSelected, handleLikeDislike }) => {
                     <div className="text-center">
                         <button
                             className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-                            onClick={() => sendMatchToPetLike(pet)}
+                            onClick={() =>{
+
+                                handleLikeOrDislikeButton(pet,"like");
+                            }}
                         >
                             Like
                         </button>

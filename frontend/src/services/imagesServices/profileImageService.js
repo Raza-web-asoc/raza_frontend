@@ -19,19 +19,17 @@ export const uploadUserImage = async (idUser, image) => {
 };
 
 export const getProfileImage = async (idUser) => {
-  const formData = new FormData();
-  formData.append("idUser", idUser);
-
   try {
-    const response = await axios.post("http://localhost/api/get-user-image", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+
+    const response = await axios.get(`http://localhost/api/get-user-image`, {
+      params: { idUser },
     });
-    console.log("Imagen de usuario obtenida:" , response);
+
+    console.log("Imagen de usuario obtenida:", response);
     return response.data;
   } catch (error) {
     console.error("Error al obtener la imagen:", error);
     throw new Error("Error al obtener la imagen");
   }
 };
+

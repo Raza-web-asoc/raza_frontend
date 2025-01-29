@@ -1,6 +1,7 @@
 import axios from "axios"
 
-export const createMatch = async (match) => {
+export const handleSwipe = async (match) => {
+    console.log(match)
     const token = localStorage.getItem("access_token")
     if (!token) {
         throw new Error("Token no encontrado")
@@ -15,6 +16,6 @@ export const createMatch = async (match) => {
         return response
     } catch (error) {
         console.error(error)
-        throw new Error("Error al crear el match")
+        throw new Error("Error al crear el swipe")
     }
 }
