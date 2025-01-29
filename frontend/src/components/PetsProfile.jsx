@@ -29,11 +29,11 @@ export default function Pets() {
   useEffect(() => {
     const fetchPetsAndOptions = async () => {
       try {
-        const { data } = await profile();
+        const data  = await profile();
         const petsResponse = await getPetsByUser(data.id_user);
         const speciesResponse = await getSpecies();
         const breedsResponse = await getBreeds();
-
+        console.log("Mascotas cargadas:", petsResponse);
         setPets(petsResponse || []);
         setSpecies(speciesResponse.data || []);
         setBreeds(breedsResponse.data || []);
@@ -122,10 +122,39 @@ export default function Pets() {
     e.preventDefault();
     try {
       const { nombre_mascota, id_especie, id_raza, sexo, fecha_nacimiento, fotos } = newPet;
-
+  
+      // Crear la nueva mascota
       const response = await createPet(nombre_mascota, id_especie, id_raza, sexo, fecha_nacimiento);
+  
+      // Subir imágenes asociadas a la nueva mascota
       await uploadPetImage(response.data.id_mascota, fotos);
-      setPets([...pets, response.data]); // Se agrega la nueva mascota a la lista de mascotas
+  
+      // Actualizar la lista de mascotas
+      const updatedPets = [...pets, response.data];
+      setPets(updatedPets);
+  
+      // Obtener imágenes para todas las mascotas nuevamente
+      const imagesPromises = updatedPets.map(async (pet) => {
+        try {
+          const response = await getPetImages(pet.id_mascota);
+          return { [pet.id_mascota]: response.images || [] };
+        } catch {
+          return { [pet.id_mascota]: [] };
+        }
+      });
+  
+      const imagesResults = await Promise.all(imagesPromises);
+      const imagesMap = Object.assign({}, ...imagesResults);
+      setPetImages(imagesMap);
+  
+      // Resetear los índices de las imágenes actuales
+      const initialIndexes = Object.keys(imagesMap).reduce((acc, petId) => {
+        acc[petId] = 0;
+        return acc;
+      }, {});
+      setCurrentImageIndex(initialIndexes);
+  
+      // Resetear el formulario
       setNewPet({
         nombre_mascota: "",
         id_especie: "",
@@ -140,6 +169,7 @@ export default function Pets() {
       console.error("Error al guardar mascota:", error);
     }
   };
+  
 
   return (
     <div className="w-full md:w-1/2 bg-green-200 p-4 rounded">

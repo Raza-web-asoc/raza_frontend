@@ -9,6 +9,7 @@ export default function Header() {
 						<li><a href="/signup" className="hover:text-gray-300">Registrarse</a></li>
 						<li><a href="/profile" className="hover:text-gray-300">Perfil</a></li>
 						<li><a href="/match" className="hover:text-gray-300">Match</a></li>
+						<li><a href="/chat" className="hover:text-gray-300">Chat</a></li>
 					</ul>
 				</nav>
 			</div>
