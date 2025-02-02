@@ -1,23 +1,27 @@
-import axios from "axios";
 import { gql } from "@apollo/client";
 import client from "../../apolloClient";
 
 export const getPets = async () => {
-  const token = localStorage.getItem("access_token");
-  if (!token) {
-    throw new Error("Token no encontrado");
-  }
-  try {
-    const response = await axios.get("http://localhost/api/pets/mascotas", {
-      headers: {
-        Authorization: `Bearer ${token}`
+  const QUERY = gql`
+    query {
+      pets {
+        id_mascota
+        nombre_mascota
+        id_especie
+        id_raza
+        sexo
+        fecha_nacimiento
       }
-    });
+    }
+  `;
 
-    return response;
+  try {
+    const { data } = await client.query({
+      query: QUERY
+    });
+    return data.pets;
   } catch (error) {
-    console.error(error);
-    throw new Error("Usuario o contraseña incorrecta");
+    throw new Error("Error al obtener todas las mascotas", error.message);
   }
 };
 
@@ -26,21 +30,27 @@ export const getPetById = async (pet_id) => {
     throw new Error("id de la mascota no proporcionada");
   }
 
-  const token = localStorage.getItem("access_token");
-  if (!token) {
-    throw new Error("Token no encontrado");
-  }
-  try {
-    const response = await axios.get(`http://localhost/api/pets/mascotas/${pet_id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
+  const QUERY = gql`
+    query {
+      petByID(pet_id: ${pet_id}) {
+        id_mascota
+        nombre_mascota
+        id_especie
+        id_raza
+        sexo
+        fecha_nacimiento
       }
-    });
+    }
+  `;
 
-    return response;
+  try {
+    const { data } = await client.query({
+      query: QUERY
+    });
+    return data.petByID;
   } catch (error) {
     console.error(error);
-    throw new Error("Usuario o contraseña incorrecta");
+    throw new Error("Error al obtener la mascota con la id: ", pet_id);
   }
 };
 
@@ -55,8 +65,9 @@ export const getPetsByUser = async (id_usuario) => {
   }
 
   const PET_QUERY = gql`
-    query mascotas($id_usuario: Int!) {
-      mascotas(id_usuario: $id_usuario) {
+    query pets($id_usuario: Int!) {
+      pets(id_usuario: $id_usuario) {
+        id_mascota
         nombre_mascota
         id_especie
         id_raza
@@ -76,9 +87,9 @@ export const getPetsByUser = async (id_usuario) => {
         },
       },
     });
-    return data.mascotas;
+    return data.pets;
   } catch (error) {
-    console.error(`Fallo en la consulta de mascotas: ${error.message}`);
-    throw new Error(`Fallo en la consulta de mascotas: ${error.message}`);
+    console.error(`Fallo en la consulta de mascotas del usuario: ${error.message}`);
+    throw new Error(`Fallo en la consulta de mascotas del usuario: ${error.message}`);
   }
 };

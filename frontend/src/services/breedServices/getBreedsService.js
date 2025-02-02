@@ -1,13 +1,25 @@
-import axios from "axios";
+import { gql } from '@apollo/client';
+import client from '../../apolloClient';
 
 export const getBreeds = async () => {
+  const BREEDS_QUERY = gql`
+    query {
+      breeds {
+        id_raza
+        nombre_raza
+        id_especie
+        historia
+      }
+    }
+  `;
+
   try {
-    const response = await axios.get("http://localhost/api/pets/razas", {
+    const { data } = await client.query({
+      query: BREEDS_QUERY
     });
-    console.log(response);
-    return response;
+
+    return data.breeds;
   } catch (error) {
-    console.error(error);
     throw new Error("Error al obtener las razas");
   }
 };

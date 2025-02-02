@@ -5,14 +5,18 @@ export const updatePet = async () => {
   if (!token) {
     throw new Error("Token no encontrado");
   }
+  const MUTATION = gql`
+    mutation editUser($input: EditUserInput!, $token: String!) {
+      editUser(input: $input, token: $token)
+    }
+  `;
+
   try {
-    const response = await axios.get("http://localhost/api/pets/mascotas", {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+    const { data } = await client.mutate({
+      mutation: MUTATION
     });
-    console.log(response);
-    return response;
+
+    return data.editUser;
   } catch (error) {
     console.error(error);
     throw new Error("Usuario o contraseña incorrecta");

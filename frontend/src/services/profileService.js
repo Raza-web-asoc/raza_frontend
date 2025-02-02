@@ -21,15 +21,11 @@ export const profile = async () => {
     }
   `;
 
-  console.log("Token:", token);
-
   try {
     const { data } = await client.query({
       query: PROFILE_QUERY,
       variables: { token },
     });
-
-    console.log("Datos del usuario:", data);
     return data.getUserData;
   } catch (error) {
     throw new Error('Error al obtener los datos del usuario:', error.message);

@@ -1,34 +1,73 @@
-import axios from "axios";
+import { gql } from '@apollo/client';
+import client from '../../apolloClient';
 
 export const uploadPetImage = async (idPet, images) => {
+  const mutation = `
+    mutation ($idPet: ID!, $files: [Upload!]!) {
+      uploadPetImages(idPet: $idPet, files: $files)
+    }
+  `;
+
   const formData = new FormData();
-  formData.append("idPet", idPet);
-  images.forEach((foto) => {
-    formData.append('files', foto);
+
+  formData.append("operations", JSON.stringify({
+    query: mutation,
+    variables: {
+      idPet: idPet,
+      files: new Array(images.length).fill(null)
+    }
+  }));
+
+  const map = {};
+  images.forEach((_, index) => {
+    map[index] = [`variables.files.${index}`];
+  });
+  formData.append("map", JSON.stringify(map));
+
+  images.forEach((image, index) => {
+    formData.append(index, image);
   });
 
   try {
-    await axios.post("http://localhost:8002/upload-pet-images", formData, {
+    const response = await fetch("http://localhost:4000/graphql", {
+      method: "POST",
       headers: {
-        "Content-Type": "multipart/form-data",
+        authorization: localStorage.getItem("access_token") || "",
       },
+      body: formData,
     });
-    console.log("Imagenes subidas con éxito");
+
+    if (!response.ok) {
+      throw new Error("Error en la subida de imágenes");
+    }
+
+    const data = await response.json();
+
+    if (data.errors) {
+      throw new Error(data.errors[0].message);
+    }
+
+    return data.data.uploadPetImages;
   } catch (error) {
-    console.error("Error al subir las imagenes:", error);
-    throw new Error("Error al subir las imagenes");
+    console.error("Error al subir las imágenes:", error);
+    throw new Error("Error al subir las imágenes");
   }
 };
 
+
 export const getPetImages = async (idPet) => {
+  const QUERY = gql`
+    query {
+      petImages(idPet: ${idPet})
+    }
+  `;
+
   try {
-    // Realiza la solicitud GET con el parámetro idPet en la URL
-    const response = await axios.get("http://localhost/api/get-pet-images", {
-      params: { idPet }, // Enviar idPet como query parameter
+    const { data } = await client.query({
+      query: QUERY
     });
 
-    console.log("Imagenes de mascota obtenidas:", response);
-    return response.data;
+    return data.petImages;
   } catch (error) {
     console.error("Error al obtener las imagenes de la mascota:", error);
     throw new Error("Error al obtener las imagenes de la mascota");

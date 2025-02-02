@@ -1,24 +1,24 @@
-import axios from "axios";
+import { gql } from '@apollo/client';
+import client from '../apolloClient';
 
-export const register = async (username, names, last_names, email, password,birthday, gender) => {
-  try {
-    const response = await axios.post("http://localhost/api/signup", {
-      username,
-      names,
-      last_names,
-      email,
-      password,
-      birthday,
-      gender
-    });
-    return response.data;
-  } catch (error) {
-    if (error.response) {
-      console.error("Error al registrar:", error.response.data.detail);
-      console.error("Código de estado:", error.response.status);
-    } else {
-      console.error("Error en la conexión:", error.message);
+export const register = async (username, names, last_names, email, password, birthday, gender) => {
+  const MUTATION = gql`
+    mutation signup($input: UserInput!) {
+      signup(input: $input){
+        idUser
+      }
     }
-    throw error.response.data.detail;
+  `;
+
+  try {
+    const { data } = await client.mutate({
+      mutation: MUTATION,
+      variables: {
+        input: { username, password, names, last_names, email, gender, birthday },
+      }
+    });
+    return data.signup;
+  } catch (error) {
+    throw new Error('Error al registrar el usuario:', error);
   }
 };

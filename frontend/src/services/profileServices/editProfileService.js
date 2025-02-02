@@ -1,6 +1,7 @@
 import axios from "axios";
 
 export const editProfile = async (names, last_names, email, birthday, gender) => {
+  console.log(names, last_names, email, birthday, gender)
   const token = localStorage.getItem("access_token");
   if (!token) {
     throw new Error("Token no encontrado");

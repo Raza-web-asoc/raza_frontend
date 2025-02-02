@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
 import { profile } from "../services/profileService";
 import { getProfileImage } from "../services/imagesServices/profileImageService";
 import { editProfile } from "../services/profileServices/editProfileService";
 import Pets from "../components/PetsProfile";
 
 export default function Profile() {
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [userInfo, setUserInfo] = useState({
     id: "",
@@ -14,15 +14,14 @@ export default function Profile() {
     correo: "",
     genero: "",
     fechaNacimiento: "",
-    foto: ""
+    foto: "",
   });
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const data = await profile();
-        const responseImage = await getProfileImage(data.id_user)
-        const imageUrl = responseImage?.image_url; 
+        const imageUrl = await getProfileImage(data.id_user);
         setUserInfo({
           id: data.id_user,
           nombres: data.names,
@@ -30,7 +29,9 @@ export default function Profile() {
           correo: data.email,
           genero: data.gender,
           fechaNacimiento: data.birthday,
-          foto: imageUrl || "https://thumbs.dreamstime.com/b/vector-de-perfil-avatar-predeterminado-foto-usuario-medios-sociales-icono-183042379.jpg"
+          foto:
+            imageUrl ||
+            "https://thumbs.dreamstime.com/b/vector-de-perfil-avatar-predeterminado-foto-usuario-medios-sociales-icono-183042379.jpg",
         });
       } catch (error) {
         console.error(error.message);
@@ -52,7 +53,13 @@ export default function Profile() {
     e.preventDefault();
 
     try {
-      const data = await editProfile(userInfo.nombres, userInfo.apellidos, userInfo.correo, userInfo.fechaNacimiento, userInfo.genero);
+      const data = await editProfile(
+        userInfo.nombres,
+        userInfo.apellidos,
+        userInfo.correo,
+        userInfo.fechaNacimiento,
+        userInfo.genero
+      );
       console.log("Usuario actualizado:", data);
     } catch (error) {
       console.error("Error al actualizar el usuario:", error);
@@ -62,15 +69,19 @@ export default function Profile() {
   return (
     <div className="flex flex-col md:flex-row gap-y-4 md:gap-x-4 p-4 justify-center">
       <div className="w-full md:w-1/4 bg-black p-4 rounded-3xl flex flex-col text-white items-center">
-        <img
-          src={userInfo.foto}
-          className="w-40 h-40 rounded-full mb-5"
-        />
+        <img src={userInfo.foto} className="w-40 h-40 rounded-full mb-5" />
         <h2 className="text-lg font-bold">Información Personal</h2>
         <p>Nombres: {userInfo.nombres}</p>
         <p>Apellidos: {userInfo.apellidos}</p>
         <p>Correo: {userInfo.correo}</p>
-        <p>Género: {userInfo.genero === "M" ? "Masculino" : userInfo.genero === "F" ? "Femenino" : "Otro"}</p>
+        <p>
+          Género:{" "}
+          {userInfo.genero === "M"
+            ? "Masculino"
+            : userInfo.genero === "F"
+            ? "Femenino"
+            : "Otro"}
+        </p>
         <p>Fecha nacimiento: {userInfo.fechaNacimiento}</p>
         <button
           onClick={() => setIsModalOpen(true)}
@@ -81,7 +92,7 @@ export default function Profile() {
       </div>
 
       {/* Mascotas*/}
-      <Pets userId={userInfo.id}/>
+      <Pets userId={userInfo.id} />
 
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -161,8 +172,7 @@ export default function Profile() {
             </form>
           </div>
         </div>
-      )
-      }
+      )}
     </div>
-  )
+  );
 }

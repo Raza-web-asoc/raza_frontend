@@ -14,8 +14,8 @@ export default function Pets() {
   const [breeds, setBreeds] = useState([]);
   const [isLoading, setIsLoading] = useState(true); // Estado para controlar la carga de datos
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [petImages, setPetImages] = useState([])
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [petImages, setPetImages] = useState([]);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [newPet, setNewPet] = useState({
     nombre_mascota: "",
     id_especie: "",
@@ -29,30 +29,27 @@ export default function Pets() {
   useEffect(() => {
     const fetchPetsAndOptions = async () => {
       try {
-        const data  = await profile();
+        const data = await profile();
         const petsResponse = await getPetsByUser(data.id_user);
         const speciesResponse = await getSpecies();
         const breedsResponse = await getBreeds();
-        console.log("Mascotas cargadas:", petsResponse);
         setPets(petsResponse || []);
-        setSpecies(speciesResponse.data || []);
-        setBreeds(breedsResponse.data || []);
-  
+        setSpecies(speciesResponse || []);
+        setBreeds(breedsResponse || []);
+
         const imagesPromises = petsResponse.map(async (pet) => {
           try {
             const response = await getPetImages(pet.id_mascota);
-            console.log(`Mascota ${pet.id_mascota} imágenes:`, response);
-            return { [pet.id_mascota]: response.images || [] };
+            return { [pet.id_mascota]: response || [] };
           } catch {
             return { [pet.id_mascota]: [] };
           }
         });
-  
+
         const imagesResults = await Promise.all(imagesPromises);
         const imagesMap = Object.assign({}, ...imagesResults);
-        console.log("Mapa de imágenes cargado:", imagesMap);
         setPetImages(imagesMap);
-  
+
         const initialIndexes = Object.keys(imagesMap).reduce((acc, petId) => {
           acc[petId] = 0;
           return acc;
@@ -64,7 +61,7 @@ export default function Pets() {
         setIsLoading(false);
       }
     };
-  
+
     fetchPetsAndOptions();
   }, []);
 
@@ -89,7 +86,13 @@ export default function Pets() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setNewPet({ ...newPet, [name]: value });
+    setNewPet({
+      ...newPet,
+      [name]:
+        name === "id_especie" || name === "id_raza"
+          ? parseInt(value, 10)
+          : value,
+    });
   };
 
   const handleFileChange = (e) => {
@@ -121,39 +124,53 @@ export default function Pets() {
   const handleSavePet = async (e) => {
     e.preventDefault();
     try {
-      const { nombre_mascota, id_especie, id_raza, sexo, fecha_nacimiento, fotos } = newPet;
-  
+      const {
+        nombre_mascota,
+        id_especie,
+        id_raza,
+        sexo,
+        fecha_nacimiento,
+        fotos,
+      } = newPet;
+
       // Crear la nueva mascota
-      const response = await createPet(nombre_mascota, id_especie, id_raza, sexo, fecha_nacimiento);
-  
+      const response = await createPet(
+        nombre_mascota,
+        id_especie,
+        id_raza,
+        sexo,
+        fecha_nacimiento
+      );
+
       // Subir imágenes asociadas a la nueva mascota
-      await uploadPetImage(response.data.id_mascota, fotos);
-  
+      await uploadPetImage(response.id_mascota, fotos);
+
       // Actualizar la lista de mascotas
-      const updatedPets = [...pets, response.data];
+      const updatedPets = [...pets, response];
       setPets(updatedPets);
-  
+
       // Obtener imágenes para todas las mascotas nuevamente
       const imagesPromises = updatedPets.map(async (pet) => {
         try {
           const response = await getPetImages(pet.id_mascota);
-          return { [pet.id_mascota]: response.images || [] };
+          return { [pet.id_mascota]: response || [] };
         } catch {
           return { [pet.id_mascota]: [] };
         }
       });
-  
+
       const imagesResults = await Promise.all(imagesPromises);
       const imagesMap = Object.assign({}, ...imagesResults);
       setPetImages(imagesMap);
-  
+      console.log("Imagenes de mascotas actualizadas:", petImages);
+
       // Resetear los índices de las imágenes actuales
       const initialIndexes = Object.keys(imagesMap).reduce((acc, petId) => {
         acc[petId] = 0;
         return acc;
       }, {});
       setCurrentImageIndex(initialIndexes);
-  
+
       // Resetear el formulario
       setNewPet({
         nombre_mascota: "",
@@ -169,26 +186,31 @@ export default function Pets() {
       console.error("Error al guardar mascota:", error);
     }
   };
-  
 
   return (
     <div className="w-full md:w-1/2 bg-green-200 p-4 rounded">
       <h2 className="text-lg font-bold">Mascotas</h2>
       <div className="flex flex-wrap gap-4">
         {pets && pets.length > 0 ? (
-          pets.map((pet) => (
+          pets.map((pet, index) => (
             <div
-              key={pet.id_mascota}
+              key={pet.id_mascota || index}
               className="relative bg-black text-white p-4 rounded-lg w-full md:w-1/3 flex flex-col"
             >
               <div className="flex justify-between items-start mb-4">
                 <p className="text-lg font-bold">{pet.nombre_mascota}</p>
               </div>
               <p>
-                <strong>Especie:</strong> {species.find(s => s.id_especie === pet.id_especie)?.nombre_especie || "Desconocida"}
+                <strong>Especie:</strong>{" "}
+                {species.find((s) => s.id_especie === pet.id_especie)
+                  ?.nombre_especie || "Desconocida"}
               </p>
               <p>
-                <strong>Raza:</strong> {breeds.find(b => b.id_especie === pet.id_especie && b.id_raza === pet.id_raza)?.nombre_raza || "Desconocida"}
+                <strong>Raza:</strong>{" "}
+                {breeds.find(
+                  (b) =>
+                    b.id_especie === pet.id_especie && b.id_raza === pet.id_raza
+                )?.nombre_raza || "Desconocida"}
               </p>
 
               {/* Sección de imágenes */}
@@ -196,7 +218,11 @@ export default function Pets() {
                 <div className="mt-4">
                   <div className="relative">
                     <img
-                      src={petImages[pet.id_mascota][currentImageIndex[pet.id_mascota]]}
+                      src={
+                        petImages[pet.id_mascota][
+                          currentImageIndex[pet.id_mascota]
+                        ]
+                      }
                       alt={`Imagen de ${pet.nombre_mascota}`}
                       className="w-full h-48 object-contain rounded"
                     />
@@ -256,8 +282,11 @@ export default function Pets() {
                   required
                 >
                   <option value="">Seleccionar</option>
-                  {species.map((specie) => (
-                    <option key={specie.id_especie} value={specie.id_especie}>
+                  {species.map((specie, index) => (
+                    <option
+                      key={specie.id_especie || index}
+                      value={specie.id_especie}
+                    >
                       {specie.nombre_especie}
                     </option>
                   ))}
@@ -273,8 +302,8 @@ export default function Pets() {
                   required
                 >
                   <option value="">Seleccionar</option>
-                  {breeds.map((breed) => (
-                    <option key={breed.id_raza} value={breed.id_raza}>
+                  {breeds.map((breed, index) => (
+                    <option key={breed.id_raza || index} value={breed.id_raza}>
                       {breed.nombre_raza}
                     </option>
                   ))}

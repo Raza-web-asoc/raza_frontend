@@ -1,27 +1,44 @@
-import axios from "axios";
+import { gql } from '@apollo/client';
+import client from '../../apolloClient';
 
-export const createPet= async (nombre_mascota, id_especie, id_raza, sexo, fecha_nacimiento) => {
+export const createPet = async (
+  nombre_mascota,
+  id_especie,
+  id_raza,
+  sexo,
+  fecha_nacimiento
+) => {
   const token = localStorage.getItem("access_token");
   if (!token) {
     throw new Error("Token no encontrado");
   }
-  console.log(nombre_mascota, id_especie, id_raza, sexo, fecha_nacimiento)
-  try {
-    const response = await axios.post(
-      "http://localhost/api/pets/mascotas/registrar",
-      {nombre_mascota, id_especie, id_raza, sexo, fecha_nacimiento},
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+
+  const MUTATION = gql`
+    mutation registerPet($input: PetInput!, $token: String!) {
+      registerPet(input: $input, token: $token) {
+        nombre_mascota
+        id_especie
+        id_raza
+        sexo
+        fecha_nacimiento
+        id_mascota
+        id_usuario
+        fecha_registro
       }
-    );
-    console.log(response);
-    return response;
+    }
+  `;
+
+  try {
+    const { data } = await client.mutate({
+      mutation: MUTATION,
+      variables: {
+        input: { nombre_mascota, id_especie, id_raza, sexo, fecha_nacimiento },
+        token,
+      },
+    });
+
+    return data.registerPet;
   } catch (error) {
-    console.error(error);
     throw new Error("Error al crear la mascota");
   }
 };
-
-

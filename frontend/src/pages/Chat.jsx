@@ -14,20 +14,19 @@ const Chat = () => {
 
   const getPetName = async (petId) => {
     const pet = await getPetById(petId);
-    console.log(pet);
-    return pet.data.nombre_mascota;
+    return pet.nombre_mascota;
   }
 
   useEffect(() => {
     if (selectedPet) {
-        const fetchChats = async () => {
-            const chats = await getChatsByPet(selectedPet.id_mascota);
-            const petsData = await Promise.all(chats.map(async (petId) => {
-              const petName = await getPetName(petId);
-              return { id_mascota: petId, nombre_mascota: petName };
-            }));
-            setPets(petsData);
-        };
+      const fetchChats = async () => {
+        const chats = await getChatsByPet(selectedPet.id_mascota);
+        const petsData = await Promise.all(chats.map(async (petId) => {
+          const petName = await getPetName(petId);
+          return { id_mascota: petId, nombre_mascota: petName };
+        }));
+        setPets(petsData);
+      };
       fetchChats();
     }
   }, [selectedPet]);
@@ -37,7 +36,7 @@ const Chat = () => {
     setChat(chat);
     const pet = pets.find(pet => pet.id_mascota === petId);
     setSelectedPetId(pet.id_mascota);
-  };  
+  };
 
   const handleSendMessage = async () => {
     if (message.trim()) {
@@ -50,7 +49,7 @@ const Chat = () => {
       }
     }
   };
-  
+
 
   return (
     <div className="flex h-screen">
@@ -66,21 +65,20 @@ const Chat = () => {
           {selectedPet && <p className="mt-4">Mascota: {selectedPet.nombre_mascota}</p>}
         </div>
         <div>
-        {pets.length > 0 ? (
+          {pets.length > 0 ? (
             pets.map((pet) => (
-                <div
+              <div
                 key={pet.id_mascota}
                 onClick={() => selectChat(pet.id_mascota)}
-                className={`p-4 cursor-pointer border-b border-gray-700 ${
-                    selectedPetId === pet.id_mascota ? "bg-gray-700" : "hover:bg-gray-700"
-                }`}
-                >
+                className={`p-4 cursor-pointer border-b border-gray-700 ${selectedPetId === pet.id_mascota ? "bg-gray-700" : "hover:bg-gray-700"
+                  }`}
+              >
                 {pet.nombre_mascota}
-                </div>
+              </div>
             ))
-            ) : (
+          ) : (
             <div className="text-gray-500 text-center mt-20">Cargando mascotas...</div>
-        )}
+          )}
         </div>
       </div>
 
@@ -89,9 +87,9 @@ const Chat = () => {
         <div className="flex-1 p-4 overflow-y-auto">
           {chat.length > 0 ? (
             chat.map((msg) => (
-                <div key={msg.message_id} className={`p-2 mb-2 ${msg.pet_id !== selectedPet.id_mascota ? "bg-gray-200" : "bg-blue-200"} rounded-lg max-w-xs ${msg.pet_id === selectedPet.id_mascota ? "self-end ml-auto" : ""}`}>
-                  {msg.message}
-                </div>
+              <div key={msg.message_id} className={`p-2 mb-2 ${msg.pet_id !== selectedPet.id_mascota ? "bg-gray-200" : "bg-blue-200"} rounded-lg max-w-xs ${msg.pet_id === selectedPet.id_mascota ? "self-end ml-auto" : ""}`}>
+                {msg.message}
+              </div>
             ))
           ) : (
             <div className="text-gray-500 text-center mt-20">Selecciona un chat para ver mensajes</div>

@@ -1,32 +1,63 @@
-import axios from "axios";
+import { gql } from '@apollo/client';
+import client from '../../apolloClient';
 
 export const uploadUserImage = async (idUser, image) => {
+  const mutation = `
+    mutation uploadUserImage($idUser: ID!, $file: Upload!) {
+      uploadUserImage(idUser: $idUser, file: $file)
+    }
+  `;
+
   const formData = new FormData();
-  formData.append("idUser", idUser);
-  formData.append("file", image);
+  formData.append(
+    'operations',
+    JSON.stringify({
+      query: mutation,
+      variables: { idUser, file: null } // Inicialmente `null` para el archivo
+    })
+  );
+
+  formData.append('map', JSON.stringify({ '0': ['variables.file'] }));
+  formData.append('0', image);
 
   try {
-    await axios.post("http://localhost:8002/upload-user-image", formData, {
+    const response = await fetch('http://localhost:4000/graphql', {
+      method: 'POST',
       headers: {
-        "Content-Type": "multipart/form-data",
+        authorization: localStorage.getItem('access_token') || '',
       },
+      body: formData,
     });
-    console.log("Imagen subida con éxito");
+
+    if (!response.ok) {
+      throw new Error('Error en la subida de la imagen');
+    }
+
+    const data = await response.json();
+
+    if (data.errors) {
+      throw new Error(data.errors[0].message);
+    }
+
+    return data.data.uploadUserImage;
   } catch (error) {
-    console.error("Error al subir la imagen:", error);
-    throw new Error("Error al subir la imagen");
+    throw new Error('Error al subir la imagen del usuario.');
   }
 };
 
+
 export const getProfileImage = async (idUser) => {
+  const QUERY = gql`
+    query {
+      userImage(idUser: ${idUser})
+    }
+  `;
+
   try {
-
-    const response = await axios.get(`http://localhost/api/get-user-image`, {
-      params: { idUser },
+    const { data } = await client.query({
+      query: QUERY
     });
-
-    console.log("Imagen de usuario obtenida:", response);
-    return response.data;
+    return data.userImage;
   } catch (error) {
     console.error("Error al obtener la imagen:", error);
     throw new Error("Error al obtener la imagen");

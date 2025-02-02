@@ -4,24 +4,31 @@ import { uploadUserImage } from "../services/imagesServices/profileImageService"
 import { useNavigate } from "react-router-dom";
 
 export default function Register() {
-  const [username, setUsername] = useState('');
-  const [names, setNames] = useState('');
-  const [lastNames, setLastNames] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [birthday, setBirthday] = useState('');
-  const [gender, setGender] = useState('');
+  const [username, setUsername] = useState("");
+  const [names, setNames] = useState("");
+  const [lastNames, setLastNames] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [birthday, setBirthday] = useState("");
+  const [gender, setGender] = useState("");
   const [image, setImage] = useState(null);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const data = await register(username, names, lastNames, email, password, birthday, gender);
-      console.log("Usuario registrado:", data);
+      const data = await register(
+        username,
+        names,
+        lastNames,
+        email,
+        password,
+        birthday,
+        gender
+      );
       if (image) {
         await uploadUserImage(data.idUser, image);
       }
@@ -42,7 +49,9 @@ export default function Register() {
       <div className="w-full flex items-center justify-center">
         <div className="bg-white px-10 py-20 rounded-3xl border-2 border-gray-100">
           <h1 className="text-5xl font-semibold">Crea una cuenta</h1>
-          <p className="font-medium text-lg text-gray-500 mt-4">Ingresa tus datos</p>
+          <p className="font-medium text-lg text-gray-500 mt-4">
+            Ingresa tus datos
+          </p>
           <form onSubmit={handleSubmit} className="mt-8">
             <div>
               <label className="text-lg font-medium">Nombre de usuario</label>
@@ -115,7 +124,9 @@ export default function Register() {
                 onChange={(e) => setGender(e.target.value)}
                 required
               >
-                <option value="" disabled>Selecciona tu género</option>
+                <option value="" disabled>
+                  Selecciona tu género
+                </option>
                 <option value="M">Masculino</option>
                 <option value="F">Femenino</option>
                 <option value="Otro">Bombastik</option>
@@ -131,13 +142,16 @@ export default function Register() {
             </div>
             {error && <p className="text-red-600 mt-2">{error}</p>}
             <div className="mt-8 flex justify-between items-center">
-              <button className="font-medium text-base text-violet-600">¿Has olvidado tu contraseña?</button>
+              <button className="font-medium text-base text-violet-600">
+                ¿Has olvidado tu contraseña?
+              </button>
             </div>
 
             <div className="mt-8 flex flex-col">
               <button
                 type="submit"
-                className="active:scale-[.98] active:duration-75 hover:scale-[1.01] ease-in-out transition-all py-3 rounded-xl bg-violet-600 text-white text-lg font-bold">
+                className="active:scale-[.98] active:duration-75 hover:scale-[1.01] ease-in-out transition-all py-3 rounded-xl bg-violet-600 text-white text-lg font-bold"
+              >
                 Ingresar
               </button>
             </div>
@@ -147,7 +161,9 @@ export default function Register() {
               <button
                 className="text-violet-600 text-base font-medium ml-2"
                 onClick={() => navigate("/signin")}
-              >Inicia sesion</button>
+              >
+                Inicia sesion
+              </button>
             </div>
           </form>
         </div>

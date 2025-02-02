@@ -1,13 +1,25 @@
-import axios from "axios";
+import { gql } from '@apollo/client';
+import client from '../../apolloClient';
 
-export const getSpecies= async () => {
+export const getSpecies = async () => {
+
+  const SPECIES_QUERY = gql`
+    query {
+      species {
+        nombre_especie
+        id_especie
+      }
+    }
+  `;
+
   try {
-    const response = await axios.get("http://localhost/api/pets/especies", {
+    const { data } = await client.query({
+      query: SPECIES_QUERY
     });
-    console.log(response);
-    return response;
+
+    return data.species;
   } catch (error) {
-    console.error(error);
-    throw new Error("Error al obtener las especies");
+    throw new Error('Error al obtener los datos de las especies:', error.message);
   }
+
 };
