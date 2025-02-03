@@ -2,6 +2,7 @@ import { handleSwipe } from "../../services/matchsServices/createMatchService.js
 import { createChat } from "../../services/chatsServices/createChatsService.js";
 import { getPetImages } from "../../services/imagesServices/petImagesService";
 import { useEffect, useState } from "react";
+import { getPetById } from "../../services/petsServices/getPetsService.js";
 
 const CardPetMatch = ({ pet, petSelected, nextPet }) => {
 	const [petImages, setPetImages] = useState([]);

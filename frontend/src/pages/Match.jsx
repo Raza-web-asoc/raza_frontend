@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { profile } from "../services/profileService.js";
 import CardPetMatch from "../components/Match/CardPetMatch.jsx";
 import { getPetsByUser } from "../services/petsServices/getPetsService";
+import { getInteractionsById } from "../services/matchsServices/getInteractions.js";
 
 export default function Match() {
   const [animals, setAnimals] = useState([]); // Usamos animals para mantener las mascotas
@@ -25,19 +26,26 @@ export default function Match() {
       console.log("No hay más mascotas");
     }
   };
-
   useEffect(() => {
     const fetchAnimals = async () => {
       try {
         const userData = await profile();
         const allPets = await getPets();
+        let interactions = [];
+
+        if (petSelected) {
+          interactions = await getInteractionsById(petSelected.id_mascota);
+        }
+
         const ownPets = await getPetsByUser(userData.id_user);
         const pets = allPets.filter(
           (item1) =>
-            !ownPets.some((item2) => item2.id_mascota === item1.id_mascota)
+            !ownPets.some((item2) => item2.id_mascota === item1.id_mascota) &&
+            !interactions.some((interaction) => interaction.id_mascota2 === item1.id_mascota)
         );
+
         console.log("PETS:", pets);
-        setAnimals(pets || []);
+        setAnimals(pets);
       } catch (error) {
         setAnimals([]);
         console.error(error);
@@ -45,7 +53,7 @@ export default function Match() {
     };
 
     fetchAnimals();
-  }, []);
+  }, [petSelected]);
 
   return (
     <div>
