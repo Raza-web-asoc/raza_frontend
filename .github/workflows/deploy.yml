@@ -32,7 +32,7 @@ jobs:
 
             # Esperar hasta que el contenedor esté en ejecución
             echo "Esperando a que el contenedor inicie..."
-            sleep 10  # Espera unos segundos para dar tiempo a que arranque
+            sleep 200  # Espera unos segundos para dar tiempo a que arranque
 
             # Verificar si el contenedor está corriendo
             if [ "$(docker ps -q -f name=raza-frontend)" ]; then
