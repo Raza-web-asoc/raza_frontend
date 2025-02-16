@@ -29,7 +29,7 @@ jobs:
 
             # Levantar contenedores
             docker compose up -d --build
-            docker exec -it raza-frontend bash
+            docker exec raza-frontend bash
             npm install
             npm run dev
 
