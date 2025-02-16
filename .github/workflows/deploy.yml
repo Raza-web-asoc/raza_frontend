@@ -30,9 +30,22 @@ jobs:
             # Levantar contenedores
             docker compose up -d
 
-            # Instalar dependencias si es necesario (sin usar -it)
-            docker exec raza-frontend bash -c "[ -d node_modules ] || npm install"
+            # Esperar hasta que el contenedor esté en ejecución
+            echo "Esperando a que el contenedor inicie..."
+            sleep 10  # Espera unos segundos para dar tiempo a que arranque
 
-            # Iniciar el servidor de desarrollo (sin -it)
-            docker exec raza-frontend bash -c "npm run dev"
+            # Verificar si el contenedor está corriendo
+            if [ "$(docker ps -q -f name=raza-frontend)" ]; then
+              echo "El contenedor está corriendo, ejecutando comandos..."
+
+              # Instalar dependencias si es necesario
+              docker exec raza-frontend bash -c "[ -d node_modules ] || npm install"
+
+              # Iniciar el servidor de desarrollo
+              docker exec raza-frontend bash -c "npm run dev"
+            else
+              echo "Error: El contenedor raza-frontend no está corriendo."
+              docker logs raza-frontend  # Mostrar logs para depuración
+              exit 1
+            fi
           EOF
