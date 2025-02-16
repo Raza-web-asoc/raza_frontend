@@ -26,6 +26,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.VM_USER_IMAGE_MS }}@${{ secrets.VM_IP_FRONTEND }} << 'EOF'
             cd /home/${{ secrets.VM_USER_IMAGE_MS }}/raza_frontend
             git pull origin master
-            docker compose build
             docker compose up -d
+            docker exec -it raza-frontend bash -c "[ -d node_modules ] || npm install"
+            docker exec -it raza-frontend bash -c "npm run dev"
           EOF

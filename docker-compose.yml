@@ -1,17 +1,13 @@
 services:
   frontend:
-    build:
-      context: .
+    build: .
+    container_name: raza-frontend
     ports:
       - "80:80"
     env_file:
       - .env
     volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    command: ["npm", "run", "dev", "--", "--host"]
-    stdin_open: true
-    tty: true
+      - .:/app
     networks:
       - autenticador_network
 

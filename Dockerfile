@@ -1,20 +1,15 @@
 # Usa la imagen de Node.js
-FROM node:18
+FROM node:21 AS build
 
 # Establece el directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# Copia solo el package.json y package-lock.json primero (para optimizar la cache)
-COPY ./frontend/package*.json ./
+COPY . .
 
-# Instala las dependencias
-RUN npm install
+RUN npm install --no-cache
 
-# Copia el resto de los archivos de tu app
-COPY ./frontend .
-
-# Expone el puerto para Vite
 EXPOSE 80
 
-# Comando predeterminado (esto será reemplazado por Docker Compose)
-CMD ["npm", "run", "dev"]
+FROM build
+
+CMD ["tail", "-f", "/dev/null"]
