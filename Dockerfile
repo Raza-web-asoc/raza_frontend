@@ -14,7 +14,7 @@ RUN npm install
 COPY ./frontend .
 
 # Expone el puerto para Vite
-EXPOSE 5173
+EXPOSE 80
 
 # Comando predeterminado (esto será reemplazado por Docker Compose)
 CMD ["npm", "run", "dev"]
