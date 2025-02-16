@@ -1,15 +1,8 @@
-# Usa la imagen de Node.js
-FROM node:21 AS build
+FROM node:20-alpine
 
-# Establece el directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-COPY . .
+COPY package.json /worker/
+COPY . /app/
 
-RUN npm install --no-cache
-
-EXPOSE 80
-
-FROM build
-
-CMD ["tail", "-f", "/dev/null"]
+CMD ["sh", "-c", "npm install && npm run dev"]
