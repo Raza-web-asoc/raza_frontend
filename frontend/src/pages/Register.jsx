@@ -48,7 +48,7 @@ export default function Register() {
     <div className="flex w-full">
       <div className="w-full flex items-center justify-center">
         <div className="bg-white px-10 py-20 rounded-3xl border-2 border-gray-100">
-          <h1 className="text-5xl font-semibold">Crea una cuenta</h1>
+          <h1 className="text-5xl font-semibold">Crea una cuenta!</h1>
           <p className="font-medium text-lg text-gray-500 mt-4">
             Ingresa tus datos
           </p>

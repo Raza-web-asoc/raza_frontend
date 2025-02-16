@@ -1,0 +1,31 @@
+name: Deploy to VM
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [closed]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up SSH
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY_IMAGE_MS }}" > private_key
+          chmod 600 private_key
+
+      - name: Deploy on VM
+        run: |
+          ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.VM_USER_IMAGE_MS }}@${{ secrets.VM_IP_FRONTEND }} << 'EOF'
+            cd /home/${{ secrets.VM_USER_IMAGE_MS }}/raza_frontend
+            git pull origin main
+            docker compose build
+            docker compose up -d
+          EOF
