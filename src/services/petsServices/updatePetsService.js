@@ -1,4 +1,4 @@
-import axios from "axios";
+import client from '../../apolloClient.jsx';
 
 export const updatePet = async () => {
   const token = localStorage.getItem("access_token");
