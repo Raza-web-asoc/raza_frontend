@@ -2,11 +2,10 @@ import { handleSwipe } from "../../services/matchsServices/createMatchService.js
 import { createChat } from "../../services/chatsServices/createChatsService.js";
 import { getPetImages } from "../../services/imagesServices/petImagesService.js";
 import { useEffect, useState } from "react";
-import { getPetById } from "../../services/petsServices/getPetsService.js";
+
 
 const CardPetMatch = ({ pet, petSelected, nextPet }) => {
 	const [petImages, setPetImages] = useState([]);
-	const [likeOrDislike, setLikeOrDislike] = useState("");
 
 	useEffect(() => {
 		const fetchPetImages = async () => {
@@ -35,11 +34,9 @@ const CardPetMatch = ({ pet, petSelected, nextPet }) => {
 				tipo_interaccion: type_interaccion,
 			});
 			// ver si en el body de la respuesta dice si existe la propiedad match y si es un true
-			if (responseMatch.match) {
+			if (responseMatch.match === "true") {
 				alert("Match creado. Ya puedes hablar con el dueño a traves del chat");
 				await createChat(petSelected.id_mascota, pet.id_mascota);
-			} else {
-				alert("Espera a que la otra persona también de like");
 			}
 		} catch (error) {
 			console.error(error);
