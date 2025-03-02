@@ -3,7 +3,6 @@ import client from '../../apolloClient.jsx';
 
 export const createPet = async (
   nombre_mascota,
-  id_especie,
   id_raza,
   sexo,
   fecha_nacimiento
@@ -16,14 +15,11 @@ export const createPet = async (
   const MUTATION = gql`
     mutation registerPet($input: PetInput!, $token: String!) {
       registerPet(input: $input, token: $token) {
+        id_mascota
         nombre_mascota
-        id_especie
         id_raza
         sexo
         fecha_nacimiento
-        id_mascota
-        id_usuario
-        fecha_registro
       }
     }
   `;
@@ -32,7 +28,7 @@ export const createPet = async (
     const { data } = await client.mutate({
       mutation: MUTATION,
       variables: {
-        input: { nombre_mascota, id_especie, id_raza, sexo, fecha_nacimiento },
+        input: { nombre_mascota, id_raza, sexo, fecha_nacimiento },
         token,
       },
     });

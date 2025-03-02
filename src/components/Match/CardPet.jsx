@@ -32,7 +32,7 @@ const CardPet = ({ pet }) => {
       <div className="p-3">
         <p className="text-lg font-bold">{pet.nombre_mascota}</p>
         <p>
-          <strong>Especie:</strong> {pet.nombre_especie + "asdsa"}
+          <strong>Especie:</strong> {pet.nombre_especie}
         </p>
         <p>
           <strong>Raza:</strong> {pet.nombre_raza}
