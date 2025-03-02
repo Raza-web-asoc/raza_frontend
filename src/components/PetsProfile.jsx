@@ -35,7 +35,6 @@ export default function Pets() {
         setPets(petsResponse || []);
         setSpecies(speciesResponse || []);
 
-
         const imagesPromises = petsResponse.map(async (pet) => {
           try {
             const response = await getPetImages(pet.id_mascota);
@@ -207,15 +206,11 @@ export default function Pets() {
               </div>
               <p>
                 <strong>Especie:</strong>{" "}
-                {species.find((s) => s.id_especie === pet.id_especie)
-                  ?.nombre_especie || "Desconocida"}
+                {pet.nombre_especie || "Desconocida"}
               </p>
               <p>
                 <strong>Raza:</strong>{" "}
-                {breeds.find(
-                  (b) =>
-                    b.id_especie === pet.id_especie && b.id_raza === pet.id_raza
-                )?.nombre_raza || "Desconocida"}
+                {pet.nombre_raza || "Desconocida"}
               </p>
 
               {/* Sección de imágenes */}
