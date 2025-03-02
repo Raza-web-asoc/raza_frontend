@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getPets } from "../services/petsServices/getPetsService.js";
 import { createPet } from "../services/petsServices/createPetService.js";
-import { getBreeds } from "../services/breedServices/getBreedsService.js";
+import {getBreeds, getBreedsBySpecie} from "../services/breedServices/getBreedsService.js";
 import { getSpecies } from "../services/speciesServices/getSpeciesService.js";
 import { uploadPetImage } from "../services/imagesServices/petImagesService.js";
 import { getPetImages } from "../services/imagesServices/petImagesService.js";
@@ -32,10 +32,9 @@ export default function Pets() {
         const data = await profile();
         const petsResponse = await getPetsByUser(data.id_user);
         const speciesResponse = await getSpecies();
-        const breedsResponse = await getBreeds();
         setPets(petsResponse || []);
         setSpecies(speciesResponse || []);
-        setBreeds(breedsResponse || []);
+
 
         const imagesPromises = petsResponse.map(async (pet) => {
           try {
@@ -84,14 +83,22 @@ export default function Pets() {
     return <p>Cargando mascotas...</p>; // Muestra un mensaje de carga mientras se obtienen los datos
   }
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleChange = async (e) => {
+
+
+    const {name, value} = e.target;
+
+    if (name === "id_especie") {
+      const breedsResponse = await getBreedsBySpecie(parseInt(value, 10));
+      setBreeds(breedsResponse || []);
+    }
+
     setNewPet({
       ...newPet,
       [name]:
-        name === "id_especie" || name === "id_raza"
-          ? parseInt(value, 10)
-          : value,
+          name === "id_especie" || name === "id_raza"
+              ? parseInt(value, 10)
+              : value,
     });
   };
 
@@ -126,7 +133,6 @@ export default function Pets() {
     try {
       const {
         nombre_mascota,
-        id_especie,
         id_raza,
         sexo,
         fecha_nacimiento,
@@ -136,7 +142,6 @@ export default function Pets() {
       // Crear la nueva mascota
       const response = await createPet(
         nombre_mascota,
-        id_especie,
         id_raza,
         sexo,
         fecha_nacimiento
@@ -300,6 +305,7 @@ export default function Pets() {
                   value={newPet.id_raza}
                   onChange={handleChange}
                   required
+                  disabled={breeds.length === 0}
                 >
                   <option value="">Seleccionar</option>
                   {breeds.map((breed, index) => (

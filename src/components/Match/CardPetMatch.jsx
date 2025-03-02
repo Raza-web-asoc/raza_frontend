@@ -33,7 +33,7 @@ const CardPetMatch = ({ pet, petSelected, nextPet }) => {
 				id_mascota2: pet.id_mascota,
 				tipo_interaccion: type_interaccion,
 			});
-			// ver si en el body de la respuesta dice si existe la propiedad match y si es un true
+
 			if (responseMatch.match === "true") {
 				alert("Match creado. Ya puedes hablar con el dueño a traves del chat");
 				await createChat(petSelected.id_mascota, pet.id_mascota);
