@@ -3,7 +3,7 @@ import { profile } from "../../services/profileService.js";
 import { getPetsByUser } from "../../services/petsServices/getPetsService.js";
 import CardPet from "./CardPet.jsx";
 
-const ChoosePetModal = ({ handleCloseModal, petSelected, setPetSelected }) => {
+const ChoosePetModal = ({ handleCloseModal, petSelected, setPetSelected, setPetSelectedInteractions, setAnimals }) => {
   const [userPets, setUserPets] = useState([]);
 
   useEffect(() => {
@@ -11,7 +11,6 @@ const ChoosePetModal = ({ handleCloseModal, petSelected, setPetSelected }) => {
       try {
         const userData = await profile();
         const pets = await getPetsByUser(userData.id_user);
-
         setUserPets(pets);
       } catch (error) {
         console.error(error);
@@ -23,6 +22,7 @@ const ChoosePetModal = ({ handleCloseModal, petSelected, setPetSelected }) => {
 
   const handlePetSelection = (pet) => {
     setPetSelected(pet); // Guarda la mascota seleccionada
+
   };
 
   return (

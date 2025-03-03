@@ -1,5 +1,6 @@
 import { gql } from '@apollo/client';
 import client from '../../apolloClient.jsx';
+import { envVariables } from '../../config/variables.js';
 
 export const uploadUserImage = async (idUser, image) => {
   const mutation = `
@@ -21,7 +22,7 @@ export const uploadUserImage = async (idUser, image) => {
   formData.append('0', image);
 
   try {
-    const response = await fetch('http://localhost:4000/graphql', {
+    const response = await fetch(`${envVariables.GRAPHQL_URL}:${envVariables.GRAPHQL_PORT}/graphql`, {
       method: 'POST',
       headers: {
         authorization: localStorage.getItem('access_token') || '',

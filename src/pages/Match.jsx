@@ -1,20 +1,32 @@
 import ChoosePetModal from "../components/Match/ChoosePet.jsx";
-import { getPets } from "../services/petsServices/getPetsService.js";
+import { getPets, getPetsToMakeMatch } from "../services/petsServices/getPetsService.js";
 import { useState, useEffect } from "react";
-import { profile } from "../services/profileService.js";
 import CardPetMatch from "../components/Match/CardPetMatch.jsx";
-import { getPetsByUser } from "../services/petsServices/getPetsService.js";
 import { getInteractionsById } from "../services/matchsServices/getInteractions.js";
 
 export default function Match() {
   const [animals, setAnimals] = useState([]); // Usamos animals para mantener las mascotas
+  const [petSelectedInteractions, setPetSelectedInteractions] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0); // Índice para el animal actual
   const [petSelected, setPetSelected] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(true);
 
-  const handleCloseModal = () => {
+  const handleCloseModal = async () => {
     if (petSelected) {
+
       setIsModalOpen(false);
+
+      let interactions = []
+      interactions = await getInteractionsById(petSelected.id_mascota);
+      setPetSelectedInteractions(interactions)
+
+      let petsElectibleForMatch = []
+      petsElectibleForMatch = await getPetsToMakeMatch(petSelected.id_usuario, petSelected.id_especie);
+      //Filter with pets already interacted
+      petsElectibleForMatch = petsElectibleForMatch.filter(pet => !interactions.some(interaction => interaction.id_mascota2 === pet.id_mascota));
+      setAnimals(petsElectibleForMatch);
+
+
     }
   };
 
@@ -26,42 +38,16 @@ export default function Match() {
       console.log("No hay más mascotas");
     }
   };
-  useEffect(() => {
-    const fetchAnimals = async () => {
-      try {
-        const userData = await profile();
-        const allPets = await getPets();
-        let interactions = [];
-
-        if (petSelected) {
-          interactions = await getInteractionsById(petSelected.id_mascota);
-        }
-
-        const ownPets = await getPetsByUser(userData.id_user);
-        const pets = allPets.filter(
-          (item1) =>
-            !ownPets.some((item2) => item2.id_mascota === item1.id_mascota) &&
-            !interactions.some((interaction) => interaction.id_mascota2 === item1.id_mascota)
-        );
-
-        console.log("PETS:", pets);
-        setAnimals(pets);
-      } catch (error) {
-        setAnimals([]);
-        console.error(error);
-      }
-    };
-
-    fetchAnimals();
-  }, [petSelected]);
 
   return (
-    <div>
+    <div style={{ backgroundImage: "url('https://img.freepik.com/vector-gratis/vector-diseno-fondo-patron-impresion-pata-animal-salvaje-divertido_1017-47618.jpg')" }}>
       {isModalOpen && (
         <ChoosePetModal
           handleCloseModal={handleCloseModal}
           petSelected={petSelected}
           setPetSelected={setPetSelected}
+          setPetSelectedInteractions={setPetSelectedInteractions}
+          setAnimals={setAnimals}
         />
       )}
 
