@@ -15,6 +15,7 @@ export default function Match() {
 
   const handleCloseModal = async () => {
     if (petSelected) {
+
       setIsModalOpen(false);
 
       let interactions = []
@@ -23,10 +24,10 @@ export default function Match() {
 
       let petsElectibleForMatch = []
       petsElectibleForMatch = await getPetsToMakeMatch(petSelected.id_usuario, petSelected.id_especie);
-
       //Filter with pets already interacted
-      petsElectibleForMatch = petsElectibleForMatch.filter(pet => !interactions.some(interaction => interaction.id_mascota === pet.id_mascota));
+      petsElectibleForMatch = petsElectibleForMatch.filter(pet => !interactions.some(interaction => interaction.id_mascota2 === pet.id_mascota));
       setAnimals(petsElectibleForMatch);
+
 
     }
   };
