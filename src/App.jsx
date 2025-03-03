@@ -11,7 +11,7 @@ import Register from "./pages/Register.jsx";
 import Profile from "./pages/Profile.jsx";
 import Match from "./pages/Match.jsx";
 import Chat from "./pages/Chat.jsx";
-
+import Home from "./pages/Home.jsx";
 // Página 404 (ruta no encontrada)
 function NotFound() {
   const location = useLocation();
@@ -60,6 +60,7 @@ function App() {
         <Header />
         <PageTracker /> {/* Registra cada visita */}
         <Routes>
+          <Route path="/" element={<Home />} />
           <Route path="/signin" element={<Login />} />
           <Route path="/signup" element={<Register />} />
           <Route path="/profile" element={<Profile />} />
