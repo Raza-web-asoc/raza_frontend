@@ -23,20 +23,15 @@ const CardPet = ({ pet }) => {
       ? petImages[0]
       : "https://thumbs.dreamstime.com/b/vector-de-perfil-avatar-predeterminado-foto-usuario-medios-sociales-icono-183042379.jpg";
   return (
-    <div className=" w-32 h-full bg-black text-white rounded-xl hover:cursor-pointer">
+    <div className="w-40 h-60 bg-white shadow-md rounded-2xl overflow-hidden hover:scale-105 transition-transform cursor-pointer">
       <img
         src={petPhoto}
         alt={pet.nombre_mascota}
-        className=" w-32 h-32 object-cover rounded-lg mx-auto"
+        className="w-full h-40 object-cover"
       />
-      <div className="p-3">
-        <p className="text-lg font-bold">{pet.nombre_mascota}</p>
-        <p>
-          <strong>Especie:</strong> {pet.nombre_especie}
-        </p>
-        <p>
-          <strong>Raza:</strong> {pet.nombre_raza}
-        </p>
+      <div className="p-3 text-gray-800">
+        <h3 className="text-lg font-semibold">{pet.nombre_mascota}</h3>
+        <p className="text-sm text-gray-500">{pet.nombre_especie} • {pet.nombre_raza}</p>
       </div>
     </div>
   );

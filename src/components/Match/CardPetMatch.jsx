@@ -2,7 +2,7 @@ import { handleSwipe } from "../../services/matchsServices/createMatchService.js
 import { createChat } from "../../services/chatsServices/createChatsService.js";
 import { getPetImages } from "../../services/imagesServices/petImagesService.js";
 import { useEffect, useState } from "react";
-
+import { X, Heart } from "lucide-react";
 
 const CardPetMatch = ({ pet, petSelected, nextPet }) => {
 	const [petImages, setPetImages] = useState([]);
@@ -35,7 +35,7 @@ const CardPetMatch = ({ pet, petSelected, nextPet }) => {
 			});
 
 			if (responseMatch.match === "true") {
-				alert("Match creado. Ya puedes hablar con el dueño a traves del chat");
+				alert("¡Match exitoso! Ya puedes hablar con el dueño a través del chat.");
 				await createChat(petSelected.id_mascota, pet.id_mascota);
 			}
 		} catch (error) {
@@ -46,54 +46,30 @@ const CardPetMatch = ({ pet, petSelected, nextPet }) => {
 	};
 
 	return (
-		<div className="w-96 rounded-xl h-max bg-black text-white">
-			<img
-				src={petPhoto}
-				alt={pet.nombre_mascota}
-				className="w-96 h-96 object-cover rounded-lg mx-auto"
-			/>
-			<div className="p-3">
-				<div className="flex flex-wrap  space-x-3">
-					<div>
-						<p className="text-lg font-bold">
-							<strong>Nombre:</strong> {pet.nombre_mascota}
-						</p>
-					</div>
-					<div>
-						<p>
-							<strong>Especie:</strong> {pet.nombre_especie}
-						</p>
-					</div>
-					<div>
-						<p>
-							<strong>Raza:</strong> {pet.nombre_raza}
-						</p>
-					</div>
-				</div>
-				<div className="flex justify-center space-x-3 mt-3">
-					<div className="text-center">
-						<button
-							className="bg-red-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-							onClick={() => {
-								handleLikeOrDislikeButton(pet, "dislike");
-							}}
-						>
-							Dislike
-						</button>
-					</div>
-					<div className="text-center">
-						<button
-							className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-							onClick={() => {
-								handleLikeOrDislikeButton(pet, "like");
-							}}
-						>
-							Like
-						</button>
-					</div>
+		<div>
+			<div className="w-96 max-w-sm shadow-lg rounded-2xl overflow-hidden flex mb-4">
+				<img src={petPhoto} alt={pet.nombre_mascota} className="w-full h-96 object-cover" />
+			</div>
+			<div className="flex flex-col justify-center items-center p-4 text-gray-900 shadow-lg rounded-2xl bg-zinc-200">
+				<h2 className="text-3xl font-bold my-2 truncate">{pet.nombre_mascota}</h2>
+				<p className="text-lg mb-1">{pet.nombre_especie} • {pet.nombre_raza}</p>
+				<div className="flex justify-between bottom-4 w-40 items-center py-4">
+					<button
+						className="bg-red-500 p-4 rounded-full text-white shadow-lg hover:bg-red-600 transition-all"
+						onClick={() => handleLikeOrDislikeButton(pet, "dislike")}
+					>
+						<X size={24} />
+					</button>
+					<button
+						className="bg-blue-500 p-4 rounded-full text-white shadow-lg hover:bg-blue-600 transition-all"
+						onClick={() => handleLikeOrDislikeButton(pet, "like")}
+					>
+						<Heart size={24} />
+					</button>
 				</div>
 			</div>
 		</div>
 	);
 };
+
 export default CardPetMatch;

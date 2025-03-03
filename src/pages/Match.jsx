@@ -1,9 +1,7 @@
 import ChoosePetModal from "../components/Match/ChoosePet.jsx";
-import {getPets, getPetsToMakeMatch} from "../services/petsServices/getPetsService.js";
+import { getPets, getPetsToMakeMatch } from "../services/petsServices/getPetsService.js";
 import { useState, useEffect } from "react";
-import { profile } from "../services/profileService.js";
 import CardPetMatch from "../components/Match/CardPetMatch.jsx";
-import { getPetsByUser } from "../services/petsServices/getPetsService.js";
 import { getInteractionsById } from "../services/matchsServices/getInteractions.js";
 
 export default function Match() {
@@ -42,7 +40,7 @@ export default function Match() {
   };
 
   return (
-    <div>
+    <div style={{ backgroundImage: "url('https://img.freepik.com/vector-gratis/vector-diseno-fondo-patron-impresion-pata-animal-salvaje-divertido_1017-47618.jpg')" }}>
       {isModalOpen && (
         <ChoosePetModal
           handleCloseModal={handleCloseModal}

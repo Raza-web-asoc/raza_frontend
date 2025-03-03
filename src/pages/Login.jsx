@@ -50,9 +50,6 @@ export default function Login() {
               />
             </div>
             {error && <p className="text-red-600 mt-2">{error}</p>}
-            <div className="mt-8 flex justify-between items-center">
-              <button className="font-medium text-base text-violet-600">¿Has olvidado tu contraseña?</button>
-            </div>
 
             <div className="mt-8 flex flex-col">
               <button
