@@ -1,8 +1,19 @@
 services:
+  tests-frontend:
+    build: .
+    command: ["npm", "test", "--", "--watchAll=false"]
+    volumes:
+      - .:/app
+    networks:
+      - autenticador_network
+
   frontend:
     build: .
     container_name: raza-frontend
-    command: sh -c "npm install && npm run dev"
+    command: ["npm", "run", "dev"]
+    depends_on:
+      tests-frontend:
+        condition: service_completed_successfully
     ports:
       - "80:80"
     env_file:
