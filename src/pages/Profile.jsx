@@ -72,7 +72,7 @@ export default function Profile() {
     <div className="flex flex-col md:flex-row gap-y-4 md:gap-x-4 p-4 justify-center">
       <div className="w-full md:w-1/4 bg-black p-4 rounded-3xl flex flex-col text-white items-center">
         <img src={userImage} className="w-40 h-40 rounded-full mb-5" />
-        <h2 className="text-lg font-bold">Información Personal</h2>
+        <h2 className="profile-title text-lg font-bold">Información Personal</h2>
         <p>Nombres: {userInfo.nombres}</p>
         <p>Apellidos: {userInfo.apellidos}</p>
         <p>Correo: {userInfo.correo}</p>

@@ -147,13 +147,14 @@ export default function Pets() {
       );
 
       // Subir imágenes asociadas a la nueva mascota
-      await uploadPetImage(response.id_mascota, fotos);
+      //await uploadPetImage(response.id_mascota, fotos);
 
       // Actualizar la lista de mascotas
       const updatedPets = [...pets, response];
       setPets(updatedPets);
 
       // Obtener imágenes para todas las mascotas nuevamente
+      /*
       const imagesPromises = updatedPets.map(async (pet) => {
         try {
           const response = await getPetImages(pet.id_mascota);
@@ -161,19 +162,21 @@ export default function Pets() {
         } catch {
           return { [pet.id_mascota]: [] };
         }
-      });
+      }); */
 
-      const imagesResults = await Promise.all(imagesPromises);
-      const imagesMap = Object.assign({}, ...imagesResults);
-      setPetImages(imagesMap);
-      console.log("Imagenes de mascotas actualizadas:", petImages);
+      //const imagesResults = await Promise.all(imagesPromises);
+      //const imagesMap = Object.assign({}, ...imagesResults);
+      //setPetImages(imagesMap);
+      //console.log("Imagenes de mascotas actualizadas:", petImages);
 
       // Resetear los índices de las imágenes actuales
+      /*
       const initialIndexes = Object.keys(imagesMap).reduce((acc, petId) => {
         acc[petId] = 0;
         return acc;
       }, {});
       setCurrentImageIndex(initialIndexes);
+      */
 
       // Resetear el formulario
       setNewPet({
@@ -199,6 +202,7 @@ export default function Pets() {
           pets.map((pet, index) => (
             <div
               key={pet.id_mascota || index}
+              data-pet-id={pet.id_mascota}
               className="relative bg-black text-white p-4 rounded-lg w-full md:w-1/3 flex flex-col"
             >
               <div className="flex justify-between items-start mb-4">
@@ -259,7 +263,7 @@ export default function Pets() {
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white rounded-lg p-6 w-96">
-            <h2 className="text-xl font-bold mb-4">Registrar Mascota</h2>
+            <h2 className="text-xl font-bold mb-4">Formulario de registro mascota</h2>
             <form onSubmit={handleSavePet}>
               <label className="block mb-2 text-sm font-medium">
                 Nombre:
@@ -335,7 +339,7 @@ export default function Pets() {
                   required
                 />
               </label>
-              <label className="block mb-2 text-sm font-medium">
+              {false && (  <label className="block mb-2 text-sm font-medium">
                 Fotos:
                 <input
                   type="file"
@@ -345,7 +349,8 @@ export default function Pets() {
                   multiple
                   onChange={handleFileChange}
                 />
-              </label>
+              </label>)}
+              
 
               <div className="mt-4 flex gap-4">
                 {imagePreviews.map((preview, index) => (
