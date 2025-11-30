@@ -1,5 +1,8 @@
 import ChoosePetModal from "../components/Match/ChoosePet.jsx";
-import { getPets, getPetsToMakeMatch } from "../services/petsServices/getPetsService.js";
+import {
+  getPets,
+  getPetsToMakeMatch,
+} from "../services/petsServices/getPetsService.js";
 import { useState, useEffect } from "react";
 import CardPetMatch from "../components/Match/CardPetMatch.jsx";
 import { getInteractionsById } from "../services/matchsServices/getInteractions.js";
@@ -13,20 +16,25 @@ export default function Match() {
 
   const handleCloseModal = async () => {
     if (petSelected) {
-
       setIsModalOpen(false);
 
-      let interactions = []
+      let interactions = [];
       interactions = await getInteractionsById(petSelected.id_mascota);
-      setPetSelectedInteractions(interactions)
+      setPetSelectedInteractions(interactions);
 
-      let petsElectibleForMatch = []
-      petsElectibleForMatch = await getPetsToMakeMatch(petSelected.id_usuario, petSelected.id_especie);
+      let petsElectibleForMatch = [];
+      petsElectibleForMatch = await getPetsToMakeMatch(
+        petSelected.id_usuario,
+        petSelected.id_especie
+      );
       //Filter with pets already interacted
-      petsElectibleForMatch = petsElectibleForMatch.filter(pet => !interactions.some(interaction => interaction.id_mascota2 === pet.id_mascota));
+      petsElectibleForMatch = petsElectibleForMatch.filter(
+        (pet) =>
+          !interactions.some(
+            (interaction) => interaction.id_mascota2 === pet.id_mascota
+          )
+      );
       setAnimals(petsElectibleForMatch);
-
-
     }
   };
 
@@ -40,7 +48,12 @@ export default function Match() {
   };
 
   return (
-    <div style={{ backgroundImage: "url('https://img.freepik.com/vector-gratis/vector-diseno-fondo-patron-impresion-pata-animal-salvaje-divertido_1017-47618.jpg')" }}>
+    <div
+      style={{
+        backgroundImage:
+          "url('https://img.freepik.com/vector-gratis/vector-diseno-fondo-patron-impresion-pata-animal-salvaje-divertido_1017-47618.jpg')",
+      }}
+    >
       {isModalOpen && (
         <ChoosePetModal
           handleCloseModal={handleCloseModal}
@@ -52,7 +65,10 @@ export default function Match() {
       )}
 
       {!isModalOpen && (
-        <div className="h-full min-w-full flex justify-center items-center">
+        <div
+          className="h-full min-w-full flex justify-center items-center"
+          data-testid="match-view"
+        >
           <div className="px-32 py-32 space-x-3 flex">
             {animals.length > 0 && currentIndex < animals.length ? (
               <div className="animal-item">

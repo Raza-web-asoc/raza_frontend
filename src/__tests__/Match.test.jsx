@@ -1,26 +1,20 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { BrowserRouter } from "react-router-dom";
+import { fireEvent } from "@testing-library/react";
 import { ApolloProvider } from "@apollo/client";
 import { describe, test, expect, beforeAll } from "@jest/globals";
 import "@testing-library/jest-dom";
 import Match from "../pages/Match.jsx";
 import { login } from "../services/signinService.js";
 import client from "../apolloClient.jsx";
-import { server } from "./setupTests.js";
-
-/**
- * Test de renderizado de la página Match
- *
- * IMPORTANTE: Este test requiere que el backend esté corriendo:
- * - API Gateway (GraphQL) en http://localhost:4000
- *
- * MSW está configurado para interceptar las llamadas pero permitir
- * que pasen al backend real usando passthrough()
- */
+import { BrowserRouter } from "react-router-dom";
 
 // Wrapper para renderizar componentes con providers necesarios
 const renderWithProviders = (ui) => {
-  return render(ui);
+  return render(
+    <ApolloProvider client={client}>
+      <BrowserRouter>{ui}</BrowserRouter>
+    </ApolloProvider>
+  );
 };
 
 describe("Página Match", () => {
@@ -96,5 +90,95 @@ describe("Página Match", () => {
     // Verificar que hay un botón de aceptar
     const acceptButton = screen.getByText(/aceptar/i);
     expect(acceptButton).toBeInTheDocument();
+  });
+
+  test("debe seleccionar una mascota y cerrar el modal al hacer click en aceptar", async () => {
+    renderWithProviders(<Match />);
+
+    // Esperar a que el modal se cargue
+    await waitFor(() => {
+      const modal = screen.getByText(/elige una mascota/i);
+      expect(modal).toBeInTheDocument();
+    });
+
+    // Esperar a que las mascotas se carguen
+    await waitFor(
+      () => {
+        const mascotas = screen.queryAllByText(/•/i);
+        expect(mascotas.length).toBeGreaterThan(0);
+      },
+      { timeout: 5000 }
+    );
+
+    // Buscar el texto que muestra la mascota seleccionada
+    const mascotaSeleccionadaText = screen.getByText(/mascota seleccionada:/i);
+    expect(mascotaSeleccionadaText).toBeInTheDocument();
+
+    // Inicialmente debe decir "Ninguna"
+    expect(screen.getByText(/ninguna/i)).toBeInTheDocument();
+
+    // Buscar todas las tarjetas de mascotas (los divs que contienen CardPet)
+    // Las tarjetas están dentro de divs con onClick
+    const mascotasCards = screen.queryAllByText(/•/i);
+
+    // Verificar que hay al menos una mascota
+    expect(mascotasCards.length).toBeGreaterThan(0);
+
+    // Hacer click en la primera mascota disponible
+    // Buscamos el contenedor clickeable (el div padre que tiene el onClick)
+    // El texto de especie/raza está dentro de un párrafo, subimos al contenedor de la tarjeta
+    const primeraMascota = mascotasCards[0];
+    // Subimos al div de la tarjeta (CardPet) y luego al div contenedor con onClick
+    const cardPetDiv = primeraMascota.closest("div");
+    const contenedorMascota = cardPetDiv?.parentElement;
+
+    if (contenedorMascota) {
+      fireEvent.click(contenedorMascota);
+
+      // Esperar a que se actualice el texto de mascota seleccionada
+      await waitFor(
+        () => {
+          // Verificar que ya no dice "Ninguna"
+          const ningunTexto = screen.queryByText(/ninguna/i);
+          expect(ningunTexto).toBeNull();
+        },
+        { timeout: 3000 }
+      );
+    } else {
+      // Si no encontramos el contenedor, intentamos hacer click directamente en el elemento
+      fireEvent.click(primeraMascota);
+
+      await waitFor(
+        () => {
+          const ningunTexto = screen.queryByText(/ninguna/i);
+          expect(ningunTexto).toBeNull();
+        },
+        { timeout: 3000 }
+      );
+    }
+
+    const matchViewBefore = screen.queryByTestId("match-view");
+    expect(matchViewBefore).toBeNull();
+
+    // Hacer click en el botón Aceptar
+    const acceptButton = screen.getByText(/aceptar/i);
+    fireEvent.click(acceptButton);
+
+    // Verificar que el modal se cerró (el texto "Elige una mascota" ya no debe estar visible)
+    await waitFor(
+      () => {
+        const modalTitle = screen.queryByText(/elige una mascota/i);
+        expect(modalTitle).not.toBeInTheDocument();
+      },
+      { timeout: 5000 }
+    );
+
+    // Verificar que se muestra la vista de match (puede mostrar "No se encontraron mascotas" o las mascotas)
+    // El modal ya no debe estar visible
+    const modal = screen.queryByText(/elige una mascota/i);
+    expect(modal).toBeNull();
+
+    const matchView = screen.getByTestId("match-view");
+    expect(matchView).toBeInTheDocument();
   });
 });
