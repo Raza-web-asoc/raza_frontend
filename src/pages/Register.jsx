@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { register } from "../services/signupService.js";
+import { signupWithGoogle } from "../services/googleSignupService.js";
 import { uploadUserImage } from "../services/imagesServices/profileImageService.js";
 import { useNavigate } from "react-router-dom";
 
@@ -80,28 +81,12 @@ export default function Register() {
 
   const handleCredentialResponse = async (response) => {
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_AUTH_BASE_URL || "http://localhost:8000"}/auth/google/signup`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token: response.credential }),
-        }
-      );
-
-      const data = await res.json();
-      const token = data.access_token || data.token;
-
-      if (token) {
-        localStorage.setItem("token", token);
-        navigate("/signin");
-      } else {
-        console.error("No token returned from Google signup:", data);
-        setError("Error al registrarse con Google");
-      }
+      await signupWithGoogle(response.credential);
+      // Redirigir al signin igual que signup normal
+      navigate("/signin");
     } catch (err) {
       console.error("Error signup Google:", err);
-      setError("Error al registrarse con Google");
+      setError(err.message || "Error al registrarse con Google");
     }
   };
   // -----------------------------------------

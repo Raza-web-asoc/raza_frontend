@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { login } from "../services/signinService.js";
+import { loginWithGoogle } from "../services/googleSigninService.js";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
@@ -39,22 +40,14 @@ export default function Login() {
   }, []);
 
   const handleCredentialResponse = async (response) => {
-    console.log("Google credential:", response.credential);
-    // aquí haces tu lógica de login con backend, redirección, etc.
+    console.log("Google credential received");
     try {
-      const res = await fetch("http://localhost:8000/auth/google", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: response.credential }),
-      });
-      const data = await res.json();
-      if (data.token) {
-        localStorage.setItem("token", data.token);
-        navigate("/home");
-      }
+      await loginWithGoogle(response.credential);
+      // Redirigir al home igual que login normal
+      window.location.href = "/";
     } catch (err) {
       console.error("Error login Google:", err);
-      setError("Error al iniciar sesión con Google");
+      setError(err.message || "Error al iniciar sesión con Google");
     }
   };
 
