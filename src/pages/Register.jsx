@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { register } from "../services/signupService.js";
 import { uploadUserImage } from "../services/imagesServices/profileImageService.js";
 import { useNavigate } from "react-router-dom";
@@ -29,9 +29,11 @@ export default function Register() {
         birthday,
         gender
       );
+
       if (image) {
         await uploadUserImage(data.idUser, image);
       }
+
       navigate("/signin");
     } catch (error) {
       setError(error);
@@ -44,6 +46,66 @@ export default function Register() {
     setImage(file);
   };
 
+  // ---------- GOOGLE SIGNUP LOGIC ----------
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
+
+    script.onload = () => {
+      /* global google */
+      google.accounts.id.initialize({
+        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID || 
+          "699512703471-goibs25j51ecsls18oqg04jpfv9ns3e0.apps.googleusercontent.com",
+        callback: handleCredentialResponse,
+      });
+
+      const container = document.getElementById("google-signup-button");
+      if (container) {
+        google.accounts.id.renderButton(container, { 
+          theme: "outline", 
+          size: "large", 
+          shape: "rectangular", 
+          logo_alignment: "left" 
+        });
+      }
+    };
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  const handleCredentialResponse = async (response) => {
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_AUTH_BASE_URL || "http://localhost:8000"}/auth/google/signup`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: response.credential }),
+        }
+      );
+
+      const data = await res.json();
+      const token = data.access_token || data.token;
+
+      if (token) {
+        localStorage.setItem("token", token);
+        navigate("/signin");
+      } else {
+        console.error("No token returned from Google signup:", data);
+        setError("Error al registrarse con Google");
+      }
+    } catch (err) {
+      console.error("Error signup Google:", err);
+      setError("Error al registrarse con Google");
+    }
+  };
+  // -----------------------------------------
+
   return (
     <div className="flex w-full">
       <div className="w-full flex items-center justify-center">
@@ -52,7 +114,9 @@ export default function Register() {
           <p className="font-medium text-lg text-gray-500 mt-4">
             Ingresa tus datos
           </p>
+
           <form onSubmit={handleSubmit} className="mt-8">
+            {/* --- Campos de registro --- */}
             <div>
               <label className="text-lg font-medium">Nombre de usuario</label>
               <input
@@ -63,26 +127,29 @@ export default function Register() {
                 required
               />
             </div>
+
             <div>
               <label className="text-lg font-medium">Nombre</label>
               <input
                 className="w-full border-2 border-gray-100 rounded-xl p-4 mt-1 bg-transparent"
-                placeholder="Ingresa un nombre de usuario"
+                placeholder="Ingresa tu nombre"
                 value={names}
                 onChange={(e) => setNames(e.target.value)}
                 required
               />
             </div>
+
             <div>
               <label className="text-lg font-medium">Apellido</label>
               <input
                 className="w-full border-2 border-gray-100 rounded-xl p-4 mt-1 bg-transparent"
-                placeholder="Ingresa un nombre de usuario"
+                placeholder="Ingresa tu apellido"
                 value={lastNames}
                 onChange={(e) => setLastNames(e.target.value)}
                 required
               />
             </div>
+
             <div>
               <label className="text-lg font-medium">Email</label>
               <input
@@ -94,6 +161,7 @@ export default function Register() {
                 required
               />
             </div>
+
             <div>
               <label className="text-lg font-medium">Contraseña</label>
               <input
@@ -105,17 +173,19 @@ export default function Register() {
                 required
               />
             </div>
+
             <div>
               <label className="text-lg font-medium">Fecha de nacimiento</label>
               <input
                 className="w-full border-2 border-gray-100 rounded-xl p-4 mt-1 bg-transparent"
-                placeholder="Ingresa un nombre de usuario"
+                placeholder="Selecciona tu fecha"
                 value={birthday}
                 type="date"
                 onChange={(e) => setBirthday(e.target.value)}
                 required
               />
             </div>
+
             <div>
               <label className="text-lg font-medium">Género</label>
               <select
@@ -132,6 +202,7 @@ export default function Register() {
                 <option value="Otro">Bombastik</option>
               </select>
             </div>
+
             <div>
               <label className="text-lg font-medium">Foto de perfil</label>
               <input
@@ -140,7 +211,10 @@ export default function Register() {
                 onChange={handleImageChange}
               />
             </div>
+            {/* --- Fin campos de registro --- */}
+
             {error && <p className="text-red-600 mt-2">{error}</p>}
+
             <div className="mt-8 flex justify-between items-center">
               <button className="font-medium text-base text-violet-600">
                 ¿Has olvidado tu contraseña?
@@ -156,13 +230,18 @@ export default function Register() {
               </button>
             </div>
 
+            {/* --- Botón de Google Sign-Up --- */}
+            <div className="mt-6 flex justify-center">
+              <div id="google-signup-button"></div>
+            </div>
+
             <div className="mt-8 flex justify-center item-center">
               <p className="font-medium text-base">¿ya tienes una cuenta?</p>
               <button
                 className="text-violet-600 text-base font-medium ml-2"
                 onClick={() => navigate("/signin")}
               >
-                Inicia sesion
+                Inicia sesión
               </button>
             </div>
           </form>

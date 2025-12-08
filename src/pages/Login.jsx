@@ -1,22 +1,70 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { login } from "../services/signinService.js";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const googleButtonRef = useRef(null);
+  const navigate = useNavigate();
 
-  const navigate = useNavigate()
+  useEffect(() => {
+    // Cargar script de Google
+    const script = document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
+
+    script.onload = () => {
+      /* global google */
+      google.accounts.id.initialize({
+        client_id: "699512703471-goibs25j51ecsls18oqg04jpfv9ns3e0.apps.googleusercontent.com",
+        callback: handleCredentialResponse,
+      });
+      // Renderiza el botón dentro del contenedor referenciado
+      if (googleButtonRef.current) {
+        google.accounts.id.renderButton(
+          googleButtonRef.current,
+          { theme: "outline", size: "large", shape: "rectangular", logo_alignment: "left" }
+        );
+      }
+    };
+
+    return () => {
+      // opcional: cleanup script si quieres desmontar
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  const handleCredentialResponse = async (response) => {
+    console.log("Google credential:", response.credential);
+    // aquí haces tu lógica de login con backend, redirección, etc.
+    try {
+      const res = await fetch("http://localhost:8000/auth/google", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: response.credential }),
+      });
+      const data = await res.json();
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+        navigate("/home");
+      }
+    } catch (err) {
+      console.error("Error login Google:", err);
+      setError("Error al iniciar sesión con Google");
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       await login(email, password);
       window.location.href = "/";
-    } catch (error) {
-      setError(error.message);
+    } catch (err) {
+      setError(err.message || "Error al iniciar sesión");
     }
   };
 
@@ -26,7 +74,8 @@ export default function Login() {
         <div className="bg-white px-10 py-20 rounded-3xl border-2 border-gray-100">
           <h1 className="text-5xl font-semibold">Bienvenido de vuelta</h1>
           <p className="font-medium text-lg text-gray-500 mt-4">Por favor ingresa tus credenciales</p>
-          <form onSubmit={handleSubmit} className="mt-8">
+
+          <form onSubmit={handleSubmit} className="mt-8 space-y-4">
             <div>
               <label className="text-lg font-medium">Email</label>
               <input
@@ -38,6 +87,7 @@ export default function Login() {
                 required
               />
             </div>
+
             <div>
               <label className="text-lg font-medium">Contraseña</label>
               <input
@@ -49,22 +99,30 @@ export default function Login() {
                 required
               />
             </div>
+
             {error && <p className="text-red-600 mt-2">{error}</p>}
 
-            <div className="mt-8 flex flex-col">
-              <button
-                type="submit"
-                className="active:scale-[.98] active:duration-75 hover:scale-[1.01] ease-in-out transition-all py-3 rounded-xl bg-violet-600 text-white text-lg font-bold">
-                Ingresar
-              </button>
-            </div>
+            <button
+              type="submit"
+              className="w-full py-3 rounded-xl bg-violet-600 text-white text-lg font-bold hover:scale-[1.01] active:scale-[.98] transition-all"
+            >
+              Ingresar
+            </button>
           </form>
-          <div className="mt-8 flex justify-center item-center">
+
+          {/* Contenedor para botón Google */}
+          <div className="mt-6 flex justify-center">
+            <div ref={googleButtonRef}></div>
+          </div>
+
+          <div className="mt-8 flex justify-center items-center">
             <p className="font-medium text-base">¿No tienes una cuenta?</p>
             <button
               className="text-violet-600 text-base font-medium ml-2"
               onClick={() => navigate("/signup")}
-            >Registrate</button>
+            >
+              Registrate
+            </button>
           </div>
         </div>
       </div>
