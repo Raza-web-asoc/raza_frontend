@@ -12,6 +12,7 @@ import Profile from "./pages/Profile.jsx";
 import Match from "./pages/Match.jsx";
 import Chat from "./pages/Chat.jsx";
 import Home from "./pages/Home.jsx";
+import Ads from "./pages/Ads.jsx";
 // Página 404 (ruta no encontrada)
 function NotFound() {
   const location = useLocation();
@@ -66,6 +67,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/match" element={<Match />} />
           <Route path="/chat" element={<Chat />} />
+          <Route path="/ads" element={<Ads />} />
           <Route path="*" element={<NotFound />} /> {/* Captura rutas desconocidas */}
         </Routes>
         <Footer />
