@@ -62,7 +62,7 @@ export default function Login() {
   };
 
   return (
-    <div className="flex w-full h-screen">
+    <div className="flex bg-red-100 w-full h-screen">
       <div className="w-full flex items-center justify-center">
         <div className="bg-white px-10 py-20 rounded-3xl border-2 border-gray-100">
           <h1 className="text-5xl font-semibold">Bienvenido de vuelta</h1>
@@ -101,7 +101,7 @@ export default function Login() {
             <button
               type="submit"
                 id="submit-button"
-              className="w-full py-3 rounded-xl bg-violet-600 text-white text-lg font-bold hover:scale-[1.01] active:scale-[.98] transition-all"
+              className="w-full py-3 rounded-xl bg-rose-500 text-white text-lg font-bold hover:scale-[1.01] active:scale-[.98] transition-all"
             >
               Ingresar
             </button>
@@ -115,7 +115,7 @@ export default function Login() {
           <div className="mt-8 flex justify-center items-center">
             <p className="font-medium text-base">¿No tienes una cuenta?</p>
             <button
-              className="text-violet-600 text-base font-medium ml-2"
+              className="text-rose-500 text-base font-medium ml-2"
               onClick={() => navigate("/signup")}
             >
               Registrate

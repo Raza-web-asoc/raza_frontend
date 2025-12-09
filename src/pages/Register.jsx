@@ -92,7 +92,7 @@ export default function Register() {
   // -----------------------------------------
 
   return (
-    <div className="flex w-full">
+    <div className="flex w-full bg-red-100">
       <div className="w-full flex items-center justify-center">
         <div className="bg-white px-10 py-20 rounded-3xl border-2 border-gray-100">
           <h1 className="text-5xl font-semibold">Crea una cuenta!</h1>
@@ -201,7 +201,7 @@ export default function Register() {
             {error && <p className="text-red-600 mt-2">{error}</p>}
 
             <div className="mt-8 flex justify-between items-center">
-              <button className="font-medium text-base text-violet-600">
+              <button className="font-medium text-base text-rose-500">
                 ¿Has olvidado tu contraseña?
               </button>
             </div>
@@ -209,7 +209,7 @@ export default function Register() {
             <div className="mt-8 flex flex-col">
               <button
                 type="submit"
-                className="active:scale-[.98] active:duration-75 hover:scale-[1.01] ease-in-out transition-all py-3 rounded-xl bg-violet-600 text-white text-lg font-bold"
+                className="active:scale-[.98] active:duration-75 hover:scale-[1.01] ease-in-out transition-all py-3 rounded-xl bg-rose-500 text-white text-lg font-bold"
               >
                 Ingresar
               </button>
@@ -223,7 +223,7 @@ export default function Register() {
             <div className="mt-8 flex justify-center item-center">
               <p className="font-medium text-base">¿ya tienes una cuenta?</p>
               <button
-                className="text-violet-600 text-base font-medium ml-2"
+                className="text-pink-600 text-base font-medium ml-2"
                 onClick={() => navigate("/signin")}
               >
                 Inicia sesión

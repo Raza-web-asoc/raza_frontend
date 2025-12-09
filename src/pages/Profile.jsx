@@ -6,7 +6,7 @@ import Pets from "../components/PetsProfile.jsx";
 
 export default function Profile() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [userImage, setUserImage] = useState("https://thumbs.dreamstime.com/b/vector-de-perfil-avatar-predeterminado-foto-usuario-medios-sociales-icono-183042379.jpg");
+  const [userImage, setUserImage] = useState("src/assets/user.jpg");
   const [userInfo, setUserInfo] = useState({
     id: "",
     nombres: "",
@@ -69,8 +69,8 @@ export default function Profile() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row gap-y-4 md:gap-x-4 p-4 justify-center">
-      <div className="w-full md:w-1/4 bg-black p-4 rounded-3xl flex flex-col text-white items-center">
+    <div className="bg-red-100 flex flex-col md:flex-row gap-y-4 md:gap-x-4 p-4 justify-center">
+      <div className="w-full md:w-1/4 bg-rose-400 p-4 rounded-3xl flex flex-col text-white items-center">
         <img src={userImage} className="w-40 h-40 rounded-full mb-5" />
         <h2 className="profile-title text-lg font-bold">Información Personal</h2>
         <p>Nombres: {userInfo.nombres}</p>
@@ -87,7 +87,7 @@ export default function Profile() {
         <p>Fecha nacimiento: {userInfo.fechaNacimiento}</p>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+          className="mt-4 bg-rose-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
         >
           Editar Perfil
         </button>

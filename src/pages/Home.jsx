@@ -14,10 +14,10 @@ export default function HomePage() {
                         Con Raza, conecta con dueños responsables y encuentra el mejor match para tu mascota de forma segura y sencilla.
                     </p>
                     <div className="flex space-x-4">
-                        <Link to="/signup" className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg text-lg">
+                        <Link to="/signup" className="bg-rose-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg text-lg">
                             Regístrate
                         </Link>
-                        <a href="#mision" className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-lg text-lg">
+                        <a href="#mision" className="bg-pink-700 hover:bg-gray-600 text-white px-6 py-3 rounded-lg text-lg">
                             Nuestros principios
                         </a>
                     </div>
@@ -79,7 +79,7 @@ export default function HomePage() {
             <section className="text-center py-16">
                 <h2 className="text-3xl font-bold mb-4">Únete a Raza hoy mismo</h2>
                 <p className="text-lg mb-6">Haz que tu mascota encuentre su pareja ideal.</p>
-                <Link to="/signup" className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg text-lg">
+                <Link to="/signup" className="bg-rose-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg text-lg">
                     Empezar ahora
                 </Link>
             </section>

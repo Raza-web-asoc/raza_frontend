@@ -195,7 +195,7 @@ export default function Pets() {
   };
 
   return (
-    <div className="w-full md:w-1/2 bg-green-200 p-4 rounded">
+    <div className="w-full md:w-1/2 bg-rose-300 p-4 rounded">
       <h2 className="text-lg font-bold">Mascotas</h2>
       <div className="flex flex-wrap gap-4">
         {pets && pets.length > 0 ? (
@@ -255,7 +255,7 @@ export default function Pets() {
       </div>
       <button
         onClick={() => setIsModalOpen(true)}
-        className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+        className="mt-4 bg-rose-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
       >
         Registrar Mascota
       </button>
