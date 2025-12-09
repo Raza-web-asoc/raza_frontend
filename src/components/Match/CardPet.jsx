@@ -7,7 +7,7 @@ const CardPet = ({ pet }) => {
   useEffect(() => {
     const fetchPetImages = async () => {
       try {
-        const response = await getPetImages(pet.id_mascota);
+        //const response = await getPetImages(pet.id_mascota);
         setPetImages(response || []);
       } catch (error) {
         console.error("Error al obtener las imágenes:", error);

@@ -18,7 +18,7 @@ export default function Header() {
 	};
 
 	return (
-		<header className="bg-gray-900 text-white shadow-md p-4">
+		<header className="bg-rose-300 text-white shadow-md p-4">
 			<div className="container mx-auto flex justify-between items-center">
 				<div className="flex items-center space-x-2">
 					<img src="public/vite.svg" alt="Logo" className="w-10 my-0 py-0" />

@@ -11,9 +11,7 @@ services:
     build: .
     container_name: raza-frontend
     command: ["npm", "run", "dev"]
-    depends_on:
-      tests-frontend:
-        condition: service_completed_successfully
+    
     ports:
       - "80:80"
     env_file:

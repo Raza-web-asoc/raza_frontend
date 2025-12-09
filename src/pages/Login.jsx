@@ -72,6 +72,7 @@ export default function Login() {
             <div>
               <label className="text-lg font-medium">Email</label>
               <input
+                id="email-field"
                 className="w-full border-2 border-gray-100 rounded-xl p-4 mt-1 bg-transparent"
                 placeholder="Ingresa tu email"
                 value={email}
@@ -84,7 +85,8 @@ export default function Login() {
             <div>
               <label className="text-lg font-medium">Contraseña</label>
               <input
-                className="w-full border-2 border-gray-100 rounded-xl p-4 mt-1 bg-transparent"
+                id="password-field"
+                className=" w-full border-2 border-gray-100 rounded-xl p-4 mt-1 bg-transparent"
                 placeholder="Ingresa tu contraseña"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -92,11 +94,13 @@ export default function Login() {
                 required
               />
             </div>
-
-            {error && <p className="text-red-600 mt-2">{error}</p>}
+            {error && <p 
+              id="login-error-message" 
+              className="text-red-600 mt-2">{error}</p>}
 
             <button
               type="submit"
+                id="submit-button"
               className="w-full py-3 rounded-xl bg-violet-600 text-white text-lg font-bold hover:scale-[1.01] active:scale-[.98] transition-all"
             >
               Ingresar
