@@ -21,11 +21,18 @@ const CardPetMatch = ({ pet, petSelected, nextPet }) => {
 		fetchPetImages();
 	}, [pet.id_mascota]);
 
-	const petPhoto =
-		petImages.length > 0
-			? petImages[0]
-			: "https://thumbs.dreamstime.com/b/vector-de-perfil-avatar-predeterminado-foto-usuario-medios-sociales-icono-183042379.jpg";
+	const images = import.meta.glob('/src/assets/perros/*.{png,jpg,jpeg,webp}', {
+		eager: true
+		});
 
+	const imageArray = Object.values(images).map((mod) => mod.default);
+
+
+	const petPhoto =imageArray.length > 0
+		? imageArray[Math.floor(Math.random() * imageArray.length)]
+		: "https://thumbs.dreamstime.com/b/vector-de-perfil-avatar-predeterminado-foto-usuario-medios-sociales-icono-183042379.jpg";
+
+	
 	const handleLikeOrDislikeButton = async (pet, type_interaccion) => {
 		try {
 			const responseMatch = await handleSwipe({
@@ -55,13 +62,13 @@ const CardPetMatch = ({ pet, petSelected, nextPet }) => {
 				<p className="text-lg mb-1">{pet.nombre_especie} • {pet.nombre_raza}</p>
 				<div className="flex justify-between bottom-4 w-40 items-center py-4">
 					<button
-						className="bg-red-500 p-4 rounded-full text-white shadow-lg hover:bg-red-600 transition-all"
+						className="bg-rose-800 p-4 rounded-full text-white shadow-lg hover:bg-red-600 transition-all"
 						onClick={() => handleLikeOrDislikeButton(pet, "dislike")}
 					>
 						<X size={24} />
 					</button>
 					<button
-						className="bg-blue-500 p-4 rounded-full text-white shadow-lg hover:bg-blue-600 transition-all"
+						className="bg-rose-500 p-4 rounded-full text-white shadow-lg hover:bg-blue-600 transition-all"
 						onClick={() => handleLikeOrDislikeButton(pet, "like")}
 					>
 						<Heart size={24} />

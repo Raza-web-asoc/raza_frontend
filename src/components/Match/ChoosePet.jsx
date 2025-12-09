@@ -52,7 +52,7 @@ const ChoosePetModal = ({ handleCloseModal, petSelected, setPetSelected, setPetS
           <div className="text-center mt-3">
             <button
               onClick={handleCloseModal}
-              className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+              className="bg-rose-500 text-white py-2 px-4 rounded hover:bg-blue-600"
             >
               Aceptar
             </button>

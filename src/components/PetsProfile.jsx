@@ -203,7 +203,7 @@ export default function Pets() {
             <div
               key={pet.id_mascota || index}
               data-pet-id={pet.id_mascota}
-              className="relative bg-black text-white p-4 rounded-lg w-full md:w-1/3 flex flex-col"
+              className="relative bg-rose-500 text-white p-4 rounded-lg w-full md:w-1/3 flex flex-col"
             >
               <div className="flex justify-between items-start mb-4">
                 <p className="text-lg font-bold">{pet.nombre_mascota}</p>

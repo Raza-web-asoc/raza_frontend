@@ -54,11 +54,11 @@ const Chat = () => {
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
-      <div className="w-1/3 bg-gray-800 text-white overflow-y-auto">
-        <div className="p-4 text-lg font-bold bg-gray-900">
+      <div className="w-1/3 bg-gray-300 text-white overflow-y-auto">
+        <div className="p-4 text-lg font-bold bg-rose-400">
           <button
             onClick={() => setIsModalOpen(true)}
-            className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
+            className="bg-rose-500 text-white py-2 px-4 rounded hover:bg-rose-600"
           >
             Seleccionar Mascota
           </button>
@@ -106,7 +106,7 @@ const Chat = () => {
           />
           <button
             onClick={handleSendMessage}
-            className="ml-4 bg-green-500 text-white px-4 py-2 rounded-lg"
+            className="ml-4 bg-rose-600 text-white px-4 py-2 rounded-lg"
             disabled={!selectedPetId || !message.trim()}
           >
             Enviar
