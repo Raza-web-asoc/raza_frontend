@@ -17,8 +17,18 @@ export default function Register() {
 
   const navigate = useNavigate();
 
+  const validatePassword = (password) => {
+    // Ejemplo de validación: al menos 6 caracteres y una mayuscula
+    const re = /^(?=.*[A-Z]).{6,}$/;
+    return re.test(password);
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validatePassword(password)) {
+      return;
+    }
 
     try {
       const data = await register(
@@ -158,6 +168,11 @@ export default function Register() {
                 required
               />
             </div>
+            {!validatePassword(password) && password.length > 0 && (
+              <p className="text-red-600 mt-2">
+                La contraseña debe tener al menos 6 caracteres y una letra mayúscula.
+              </p>
+            )}
 
             <div>
               <label className="text-lg font-medium">Fecha de nacimiento</label>
