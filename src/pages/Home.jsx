@@ -5,12 +5,14 @@ import { getAllAds } from "../services/adsServices/adsService.js";
 export default function HomePage() {
   const [ads, setAds] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [mainAds, setMainAds] = useState(null);
 
   useEffect(() => {
     const loadAds = async () => {
       try {
         const adsData = await getAllAds();
-        setAds(adsData);
+        setMainAds(adsData.slice(0,3));
+        setAds(adsData.slice(3));
       } catch (error) {
         console.error("Error al cargar anuncios:", error);
       } finally {
@@ -88,38 +90,54 @@ export default function HomePage() {
         </div>
       </section>
       {/* Noticias Section */}
-      <section className="grid md:grid-cols-3 gap-8 px-8 pt-10 pb-16 max-w-5xl mx-auto text-center">
-        <h2 className="text-3xl font-bold col-span-3">Noticias</h2>
+      <section className=" bg-rose-500 gap-8 px-8 pt-10 pb-16  mx-auto text-center min-w-screen">
+        <h2 className="text-3xl font-bold col-span-3 mb-10">Noticias</h2>
         {isLoading ? (
           <div className="col-span-3 text-center py-8">
             <p className="text-lg">Cargando noticias...</p>
           </div>
-        ) : ads.length === 0 ? (
+        ) : ads.length === 0 && !mainAds ? (
           <div className="col-span-3 text-center py-8">
             <p className="text-lg">No hay noticias disponibles</p>
           </div>
         ) : (
-          ads.map((ad) => (
-            <div key={ad.id} className="p-6 bg-rose-300 rounded-lg shadow-lg">
-              {ad.image_base64 ? (
-                <img
-                  src={
-                    ad.image_base64.startsWith("data:")
-                      ? ad.image_base64
-                      : `data:image/jpeg;base64,${ad.image_base64}`
-                  }
-                  alt={ad.title}
-                  className="mx-auto mb-4 h-40 rounded-lg object-cover w-full"
-                />
-              ) : (
-                <div className="mx-auto mb-4 h-40 rounded-lg bg-gray-200 flex items-center justify-center">
-                  <p className="text-gray-500">Sin imagen</p>
-                </div>
-              )}
-              <h3 className="text-2xl font-semibold mb-2">{ad.title}</h3>
-              <p>{ad.description}</p>
+          <>
+            <div className="px-24 " >
+              <div className="flex flex-row flex-wrap justify-center gap-4 overflow-x-auto mb-8">
+
+                {mainAds && mainAds.map((ad) => (
+                  <div key={ad.id} className="bg-rose-300 w-80 rounded-lg shadow-lg p-6 ">
+                    <img src={
+                          ad.image_base64.startsWith("data:")
+                            ? ad.image_base64
+                            : `data:image/jpeg;base64,${ad.image_base64}`
+                        }
+                        alt={ad.title}
+                        className="mb-4 h-60 w-60 rounded-lg mx-auto  w-full "
+                      />
+                    
+                    <h3 className="text-2xl font-semibold mb-2">{ad.title}</h3>
+                    
+                    <p className="text-base">{ad.description}</p>
+                    
+                    
+                
+                  </div>
+                ))}
+              </div>
+              <div className="flex flex-row flex-wrap justify-center gap-4 overflow-x-auto mb-8">
+
+                {ads.map((ad) => (
+                  <div key={ad.id} className="p-6 bg-rose-300 w-40  h-fit rounded-lg shadow-lg mb-4">
+                    
+                    <h3 className="text-sm font-semibold mb-2">{ad.title}</h3>
+                    <p className="text-xs text">{ad.description}</p>
+                  </div>
+              ))} 
+                
+              </div>
             </div>
-          ))
+          </>
         )}
       </section>
 
