@@ -18,8 +18,8 @@ export default function Register() {
   const navigate = useNavigate();
 
   const validatePassword = (password) => {
-    // Ejemplo de validación: al menos 6 caracteres y una mayuscula
-    const re = /^(?=.*[A-Z]).{6,}$/;
+    // Ejemplo de validación: al menos 6 caracteres, una mayuscula y un caracter especial
+    const re = /^(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{6,}$/;
     return re.test(password);
   }
 
@@ -169,8 +169,8 @@ export default function Register() {
               />
             </div>
             {!validatePassword(password) && password.length > 0 && (
-              <p className="text-red-600 mt-2">
-                La contraseña debe tener al menos 6 caracteres y una letra mayúscula.
+              <p className=" text-red-600 mt-2">
+                La contraseña debe tener al menos 6 caracteres, una letra mayúscula y un cáracter especial.
               </p>
             )}
 
