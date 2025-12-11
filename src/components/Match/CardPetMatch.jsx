@@ -61,13 +61,15 @@ const CardPetMatch = ({ pet, petSelected, nextPet }) => {
 				<h2 className="text-3xl font-bold my-2 truncate">{pet.nombre_mascota}</h2>
 				<p className="text-lg mb-1">{pet.nombre_especie} • {pet.nombre_raza}</p>
 				<div className="flex justify-between bottom-4 w-40 items-center py-4">
-					<button
+					<button 
+						id="dislike-button"
 						className="bg-rose-800 p-4 rounded-full text-white shadow-lg hover:bg-red-600 transition-all"
 						onClick={() => handleLikeOrDislikeButton(pet, "dislike")}
 					>
 						<X size={24} />
 					</button>
 					<button
+						id="like-button"
 						className="bg-rose-500 p-4 rounded-full text-white shadow-lg hover:bg-blue-600 transition-all"
 						onClick={() => handleLikeOrDislikeButton(pet, "like")}
 					>

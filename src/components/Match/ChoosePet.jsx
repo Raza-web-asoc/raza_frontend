@@ -26,9 +26,9 @@ const ChoosePetModal = ({ handleCloseModal, petSelected, setPetSelected, setPetS
   };
 
   return (
-    <div className="bg-gray-800 bg-opacity-50 min-h-screen min-w-full flex justify-center items-center">
-      <div className="w-max mt-12 bg-white rounded">
-        <div className="py-5 px-10">
+    <div   className="bg-gray-800 bg-opacity-50 min-h-screen min-w-full flex justify-center items-center">
+      <div   className="w-max mt-12 bg-white rounded">
+        <div id="choose-pet-modal" className="py-5 px-10">
           <div className="text-center mb-4">
             <h2 className="text-xl font-bold">Elige una mascota</h2>
           </div>
@@ -36,6 +36,7 @@ const ChoosePetModal = ({ handleCloseModal, petSelected, setPetSelected, setPetS
             {userPets.map((pet) => (
               <div
                 key={pet.id_mascota}
+                data-testid="pet-card-choice"
                 className="m-2"
                 onClick={() => handlePetSelection(pet)}
               >
@@ -51,6 +52,7 @@ const ChoosePetModal = ({ handleCloseModal, petSelected, setPetSelected, setPetS
           </div>
           <div className="text-center mt-3">
             <button
+              id='accept-pet-selection-button'
               onClick={handleCloseModal}
               className="bg-rose-500 text-white py-2 px-4 rounded hover:bg-blue-600"
             >

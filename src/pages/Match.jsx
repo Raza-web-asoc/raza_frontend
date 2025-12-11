@@ -30,12 +30,13 @@ export default function Match() {
         petSelected.id_especie
       );
       //Filter with pets already interacted
+      /*
       petsElectibleForMatch = petsElectibleForMatch.filter(
         (pet) =>
           !interactions.some(
             (interaction) => interaction.id_mascota2 === pet.id_mascota
           )
-      );
+      ); */ // Desactivado para pruebas
       setAnimals(petsElectibleForMatch);
     }
   };
@@ -88,6 +89,7 @@ export default function Match() {
                     className="absolute top-0 pointer-events-none z-0"
                   >
                     <CardPetMatch
+                      id="previous-pet-card"
                       pet={animals[currentIndex - 1]}
                       petSelected={petSelected}
                       disabled
@@ -98,7 +100,9 @@ export default function Match() {
                 {/* Tarjeta principal (drag real) */}
                 <AnimatePresence>
                   <motion.div
+                    id="current-pet-card"
                     key={`current-${currentIndex}`}
+                    data-pet-id={animals[currentIndex].id_mascota}  
                     drag="x"
                     dragConstraints={{ left: 0, right: 0 }}
                     onDragEnd={(e, info) => {
@@ -114,6 +118,7 @@ export default function Match() {
                     className="absolute top-0 z-20 cursor-grab active:cursor-grabbing"
                   >
                     <CardPetMatch
+                      
                       pet={animals[currentIndex]}
                       petSelected={petSelected}
                       nextPet={nextPet}
@@ -128,9 +133,10 @@ export default function Match() {
                     initial={{ opacity: 0, x: 300, scale: 0.8 }}
                     animate={{ opacity: 0.5, x: 430, scale: 0.9 }}
                     transition={{ duration: 0.3 }}
-                    className="absolute top-0 pointer-events-none z-10"
+                    className="absolute top-0 pointer-events-none  z-10"
                   >
                     <CardPetMatch
+                      id="next-pet-card"
                       pet={animals[currentIndex + 1]}
                       petSelected={petSelected}
                       disabled
