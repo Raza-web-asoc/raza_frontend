@@ -153,6 +153,7 @@ export default function Ads() {
             Gestión de Anuncios
           </h1>
           <button
+            id = "new-ad-button"
             onClick={handleOpenCreateModal}
             className="bg-rose-500 text-white px-6 py-3 rounded-lg hover:bg-rose-600 transition flex items-center gap-2"
           >
@@ -182,6 +183,7 @@ export default function Ads() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {ads.map((ad) => (
               <div
+                data-testid="ad-card"
                 key={ad.id}
                 className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition"
               >
@@ -195,14 +197,15 @@ export default function Ads() {
                   </div>
                 )}
                 <div className="p-4">
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">
+                  <h3 className="ad-title text-xl font-bold text-gray-800 mb-2">
                     {ad.title}
                   </h3>
-                  <p className="text-gray-600 mb-4 line-clamp-3">
+                  <p className="ad-description text-gray-600 mb-4 line-clamp-3">
                     {ad.description}
                   </p>
                   <div className="flex gap-2">
                     <button
+                      data-testid='edit-ad-button'
                       onClick={() => handleEdit(ad)}
                       className="flex-1 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition flex items-center justify-center gap-2"
                     >
@@ -210,6 +213,7 @@ export default function Ads() {
                       Editar
                     </button>
                     <button
+                      data-testid="delete-ad-button"
                       onClick={() => handleDelete(ad.id)}
                       className="flex-1 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition flex items-center justify-center gap-2"
                     >
@@ -245,6 +249,7 @@ export default function Ads() {
                     Título *
                   </label>
                   <input
+                    id="title-ad-input"
                     type="text"
                     name="title"
                     value={formData.title}
@@ -259,6 +264,7 @@ export default function Ads() {
                     Descripción *
                   </label>
                   <textarea
+                    id="description-ad-input"
                     name="description"
                     value={formData.description}
                     onChange={handleInputChange}
@@ -273,6 +279,7 @@ export default function Ads() {
                     Imagen
                   </label>
                   <input
+                    id="image-ad-input"
                     type="file"
                     accept="image/*"
                     onChange={handleImageChange}
@@ -307,6 +314,7 @@ export default function Ads() {
                     Cancelar
                   </button>
                   <button
+                    id="save-ad-button"
                     type="submit"
                     className="bg-rose-500 text-white px-6 py-2 rounded-lg hover:bg-rose-600 transition"
                   >
