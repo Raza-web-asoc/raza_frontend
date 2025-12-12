@@ -1,11 +1,11 @@
 services:
-  # tests-frontend:
-  #   build: .
-  #   command: ["npm", "test", "--", "--watchAll=false"]
-  #   volumes:
-  #     - .:/app
-  #   networks:
-  #     - autenticador_network
+  tests-frontend:
+    build: .
+    command: ["npm", "test", "--", "--watchAll=false"]
+    volumes:
+      - .:/app
+    networks:
+      - autenticador_network
 
   frontend:
     build: .
