@@ -34,7 +34,7 @@ export default function HomePage() {
             Encuentra la pareja perfecta para tu mascota
           </h1>
           <p className="text-lg mb-6 max-w-2xl text-white">
-            Con Raza, conecta con dueños responsables y encuentra el mejor match
+            Con Raza perro, conecta con dueños responsables y encuentra el mejor match
             para tu mascota de forma segura y sencilla.
           </p>
           <div className="flex space-x-4">

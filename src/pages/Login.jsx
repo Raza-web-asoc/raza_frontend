@@ -54,8 +54,12 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login(email, password);
-      window.location.href = "/";
+      const role = await login(email, password);
+      if (role === 2 ) {
+        window.location.href = "/ads";
+      } else {
+        window.location.href = "/";
+      }
     } catch (err) {
       setError(err.message || "Error al iniciar sesión");
     }

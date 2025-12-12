@@ -6,6 +6,7 @@ export const login = async (username, password) => {
     mutation signin($input: LoginInput!) {
       signin(input: $input) {
         access_token
+        role
       }
     }
   `;
@@ -16,8 +17,11 @@ export const login = async (username, password) => {
       variables: { input: { username, password } },
     });
 
-    const { access_token } = data.signin;
+    const { access_token, role } = data.signin;
     localStorage.setItem('access_token', access_token);
+    localStorage.setItem('role', role);
+    
+    return role;
   } catch (error) {
     throw new Error('Usuario o contraseña incorrecta:', error);
   }
