@@ -241,10 +241,11 @@ export default function Ads() {
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
                     Título *
                   </label>
                   <input
+                    id="title"
                     type="text"
                     name="title"
                     value={formData.title}
@@ -255,10 +256,11 @@ export default function Ads() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
                     Descripción *
                   </label>
                   <textarea
+                    id="description"
                     name="description"
                     value={formData.description}
                     onChange={handleInputChange}
@@ -269,10 +271,11 @@ export default function Ads() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-2">
                     Imagen
                   </label>
                   <input
+                    id="image"
                     type="file"
                     accept="image/*"
                     onChange={handleImageChange}
