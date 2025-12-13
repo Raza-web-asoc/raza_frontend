@@ -264,6 +264,7 @@ export default function Ads() {
                     Descripción *
                   </label>
                   <textarea
+                    id="description"
                     name="description"
                     value={formData.description}
                     onChange={handleInputChange}
@@ -278,6 +279,7 @@ export default function Ads() {
                     Imagen
                   </label>
                   <input
+                    id="image"
                     type="file"
                     accept="image/*"
                     onChange={handleImageChange}

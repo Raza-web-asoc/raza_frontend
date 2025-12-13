@@ -7,7 +7,7 @@ const CardPet = ({ pet }) => {
   useEffect(() => {
     const fetchPetImages = async () => {
       try {
-        //const response = await getPetImages(pet.id_mascota);
+        const response = await getPetImages(pet.id_mascota);
         setPetImages(response || []);
       } catch (error) {
         console.error("Error al obtener las imágenes:", error);
@@ -31,7 +31,9 @@ const CardPet = ({ pet }) => {
       />
       <div className="p-3 text-gray-800">
         <h3 className="text-lg font-semibold">{pet.nombre_mascota}</h3>
-        <p className="text-sm text-gray-500">{pet.nombre_especie} • {pet.nombre_raza}</p>
+        <p className="text-sm text-gray-500">
+          {pet.nombre_especie} • {pet.nombre_raza}
+        </p>
       </div>
     </div>
   );
