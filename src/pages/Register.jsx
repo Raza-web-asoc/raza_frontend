@@ -14,6 +14,8 @@ export default function Register() {
   const [gender, setGender] = useState("");
   const [image, setImage] = useState(null);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
 
   const navigate = useNavigate();
 
@@ -156,18 +158,31 @@ export default function Register() {
                 required
               />
             </div>
-
             <div>
               <label className="text-lg font-medium">Contraseña</label>
-              <input
-                className="w-full border-2 border-gray-100 rounded-xl p-4 mt-1 bg-transparent"
-                placeholder="Ingresa tu contraseña"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                type="password"
-                required
-              />
+
+              <div className="relative mt-1">
+                <input
+                  className="w-full border-2 border-gray-100 rounded-xl p-4 pr-12 bg-transparent"
+                  placeholder="Ingresa tu contraseña"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  type={showPassword ? "text" : "password"}
+                  required
+                />
+
+                {/* Ojito */}
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  aria-label="Mostrar u ocultar contraseña"
+                >
+                  {showPassword ? "🙈" : "👁️"}
+                </button>
+              </div>
             </div>
+
             {!validatePassword(password) && password.length > 0 && (
               <p className=" text-red-600 mt-2">
                 La contraseña debe tener al menos 6 caracteres, una letra mayúscula y un cáracter especial.
