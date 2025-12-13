@@ -256,6 +256,7 @@ export default function Pets() {
       <button
         onClick={() => setIsModalOpen(true)}
         className="mt-4 bg-rose-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+        id="register-pet-button"
       >
         Registrar Mascota
       </button>
@@ -268,6 +269,7 @@ export default function Pets() {
               <label className="block mb-2 text-sm font-medium">
                 Nombre:
                 <input
+                  id="name-pet-input"
                   type="text"
                   name="nombre_mascota"
                   className="block w-full p-2 border rounded mt-1"
@@ -279,6 +281,7 @@ export default function Pets() {
               <label className="block mb-2 text-sm font-medium">
                 Especie:
                 <select
+                  id="species-pet-select"
                   name="id_especie"
                   className="block w-full p-2 border rounded mt-1"
                   value={newPet.id_especie}
@@ -299,6 +302,7 @@ export default function Pets() {
               <label className="block mb-2 text-sm font-medium">
                 Raza:
                 <select
+                  id="race-pet-select"
                   name="id_raza"
                   className="block w-full p-2 border rounded mt-1"
                   value={newPet.id_raza}
@@ -317,6 +321,7 @@ export default function Pets() {
               <label className="block mb-2 text-sm font-medium">
                 Sexo:
                 <select
+                  id="sex-pet-select"
                   name="sexo"
                   className="block w-full p-2 border rounded mt-1"
                   value={newPet.sexo}
@@ -331,6 +336,7 @@ export default function Pets() {
               <label className="block mb-2 text-sm font-medium">
                 Fecha de Nacimiento:
                 <input
+                  id="birthdate-pet-input"
                   type="date"
                   name="fecha_nacimiento"
                   className="block w-full p-2 border rounded mt-1"
@@ -380,6 +386,7 @@ export default function Pets() {
                   Cancelar
                 </button>
                 <button
+                  id="save-pet-button"
                   type="submit"
                   className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                 >
