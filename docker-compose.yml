@@ -18,6 +18,7 @@ services:
       - .env
     volumes:
       - .:/app
+      - /app/node_modules
     networks:
       - autenticador_network
 

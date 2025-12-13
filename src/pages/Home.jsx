@@ -11,8 +11,27 @@ export default function HomePage() {
     const loadAds = async () => {
       try {
         const adsData = await getAllAds();
-        setMainAds(adsData.slice(0,3));
-        setAds(adsData.slice(3));
+          // 1. Filtrar solo los que tienen imagen_base64
+        const withImages = adsData.filter(ad => ad.image_base64);
+
+        // 2. Hacer shuffle aleatorio (Fisher–Yates)
+        const shuffled = [...withImages].sort(() => Math.random() - 0.5);
+
+        // 3. Tomar los primeros 3 como main ads
+        const main = shuffled.slice(0, 3);
+
+       // 4. El resto (de todos los anuncios, pero quitando los main)
+      const remainingRaw = adsData.filter(ad => !main.includes(ad));
+
+      // Shuffle al resto
+      const remainingShuffled = [...remainingRaw].sort(() => Math.random() - 0.5);
+
+      // Slice de solo 5 elementos
+      const remaining = remainingShuffled.slice(0, 5);
+
+
+      setMainAds(main);
+      setAds(remaining);
       } catch (error) {
         console.error("Error al cargar anuncios:", error);
       } finally {
@@ -34,7 +53,7 @@ export default function HomePage() {
             Encuentra la pareja perfecta para tu mascota
           </h1>
           <p className="text-lg mb-6 max-w-2xl text-white">
-            Con Raza, conecta con dueños responsables y encuentra el mejor match
+            Con Raza perro, conecta con dueños responsables y encuentra el mejor match
             para tu mascota de forma segura y sencilla.
           </p>
           <div className="flex space-x-4">
@@ -121,16 +140,15 @@ export default function HomePage() {
                     <p className="text-base">{ad.description}</p>
                     
                     
-                
                   </div>
                 ))}
               </div>
               <div className="flex flex-row flex-wrap justify-center gap-4 overflow-x-auto mb-8">
 
                 {ads.map((ad) => (
-                  <div key={ad.id} className="p-6 bg-rose-300 w-40  h-fit rounded-lg shadow-lg mb-4">
+                  <div key={ad.id} className="p-6 bg-rose-300 w-40  h-50 rounded-lg shadow-lg mb-4">
                     
-                    <h3 className="text-sm font-semibold mb-2">{ad.title}</h3>
+                    <h3 className="text-sm font-semibold mb-2 break-keep">{ad.title}</h3>
                     <p className="text-xs text">{ad.description}</p>
                   </div>
               ))} 

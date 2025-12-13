@@ -56,6 +56,7 @@ async function getUserDataAfterLogin(token) {
         last_names
         birthday
         gender
+        role
       }
     }
   `;
@@ -65,6 +66,12 @@ async function getUserDataAfterLogin(token) {
       query: USER_QUERY,
       variables: { token },
     });
+    
+    // Guardar role en localStorage si está disponible
+    if (data.getUserData && data.getUserData.role !== undefined) {
+      localStorage.setItem('role', data.getUserData.role);
+    }
+    
     return data.getUserData;
   } catch (error) {
     console.warn("No se pudo traer datos del usuario:", error.message);

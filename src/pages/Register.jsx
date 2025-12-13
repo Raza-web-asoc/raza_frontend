@@ -14,6 +14,7 @@ export default function Register() {
   const [gender, setGender] = useState("");
   const [image, setImage] = useState(null);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
 
@@ -102,11 +103,11 @@ export default function Register() {
   // -----------------------------------------
 
   return (
-    <div className="flex w-full bg-red-100">
-      <div className="w-full flex items-center justify-center">
+    <div className="flex w-full bg-red-100 items-center justify-center  ">
+      <div className="  items-center justify-center my-3 min-w-xl max-w-xl">
         <div className="bg-white px-10 py-20 rounded-3xl border-2 border-gray-100">
           <h1 className="text-5xl font-semibold">Crea una cuenta!</h1>
-          <p className="font-medium text-lg text-gray-500 mt-4">
+          <p className="font-medium text-lg text-gray-500 mt-2">
             Ingresa tus datos
           </p>
 
@@ -156,20 +157,33 @@ export default function Register() {
                 required
               />
             </div>
-
             <div>
               <label className="text-lg font-medium">Contraseña</label>
-              <input
-                className="w-full border-2 border-gray-100 rounded-xl p-4 mt-1 bg-transparent"
-                placeholder="Ingresa tu contraseña"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                type="password"
-                required
-              />
+
+              <div className="relative mt-1">
+                <input
+                  className="w-full border-2 border-gray-100 rounded-xl p-4 pr-12 bg-transparent"
+                  placeholder="Ingresa tu contraseña"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  type={showPassword ? "text" : "password"}
+                  required
+                />
+
+                {/* Ojito */}
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  aria-label="Mostrar u ocultar contraseña"
+                >
+                  {showPassword ? "🙈" : "👁️"}
+                </button>  
+              </div>
             </div>
+
             {!validatePassword(password) && password.length > 0 && (
-              <p className=" text-red-600 mt-2">
+              <p className=" w-fit text-red-600 mt-2 break-words">
                 La contraseña debe tener al menos 6 caracteres, una letra mayúscula y un cáracter especial.
               </p>
             )}
@@ -203,14 +217,7 @@ export default function Register() {
               </select>
             </div>
 
-            <div>
-              <label className="text-lg font-medium">Foto de perfil</label>
-              <input
-                type="file"
-                className="w-full border-2 border-gray-100 rounded-xl p-4 mt-1 bg-transparent"
-                onChange={handleImageChange}
-              />
-            </div>
+          
             {/* --- Fin campos de registro --- */}
 
             {error && <p className="text-red-600 mt-2">{error}</p>}

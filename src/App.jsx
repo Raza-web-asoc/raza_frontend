@@ -6,11 +6,13 @@ import { sendMetrics } from "./utils/monitoring.js"; // Importar la función par
 
 import Footer from "./components/Footer.jsx";
 import Header from "./components/Header.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import Profile from "./pages/Profile.jsx";
 import Match from "./pages/Match.jsx";
 import Chat from "./pages/Chat.jsx";
+import AccessDeniedce from "./pages/AccessDenied.jsx";
 import Home from "./pages/Home.jsx";
 import Ads from "./pages/Ads.jsx";
 // Página 404 (ruta no encontrada)
@@ -55,6 +57,8 @@ function PageTracker() {
 }
 
 function App() {
+  const ADMIN_ROLE = "2"; // Definir el rol de administrador  
+
   return (
     <ApolloProvider client={client}>
       <Router>
@@ -64,10 +68,36 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/signin" element={<Login />} />
           <Route path="/signup" element={<Register />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/match" element={<Match />} />
+          <Route path="/access-denied" element={<AccessDeniedce />} />
           <Route path="/chat" element={<Chat />} />
-          <Route path="/ads" element={<Ads />} />
+          
+          {/* Ruta protegida por token deben estar loggeados para acceder */}
+
+          <Route path="/profile" element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          } />
+
+
+
+          <Route path="/match" element={
+            <ProtectedRoute>
+              <Match />
+            </ProtectedRoute>
+          } />
+
+          {/* Ruta protegida por rol de administrador (role 2) */}
+
+          <Route 
+            path="/ads" 
+            element={
+              <ProtectedRoute allowedRoles={[ADMIN_ROLE]}>
+                <Ads />
+              </ProtectedRoute>
+            } 
+          />
+          
           <Route path="*" element={<NotFound />} /> {/* Captura rutas desconocidas */}
         </Routes>
         <Footer />

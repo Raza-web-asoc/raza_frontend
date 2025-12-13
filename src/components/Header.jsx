@@ -23,7 +23,6 @@ export default function Header() {
       setIsAuthenticated(true);
       const fetchUserData = async () => {
         const userData = await profile();
-        console.log(userData);
         setUserData(userData);
       };
       fetchUserData();
@@ -32,13 +31,14 @@ export default function Header() {
 
   const isAdmin = useMemo(() => {
     if (userData) {
-      console.log(userData.email, userData.email.includes("@raza.com"));
-      return userData.email.includes("@raza.com");
+      const userRole = localStorage.getItem("role");
+      return userRole, userRole === "2";
     }
   }, [userData]);
 
   const handleLogout = () => {
     localStorage.removeItem("access_token");
+    localStorage.removeItem("role");
     setIsAuthenticated(false);
   };
 

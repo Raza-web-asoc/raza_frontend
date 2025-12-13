@@ -1,8 +1,18 @@
-FROM node:20-alpine
+FROM node:20
 
 WORKDIR /app
 
-COPY package.json /worker/
-COPY . /app/
+# Copiar solo los archivos necesarios para instalar dependencias
+COPY package.json package-lock.json ./
 
-CMD ["sh", "-c", "npm install && npm run dev"]
+# Instalar dependencias
+RUN npm install
+
+# Copiar el resto de los archivos
+COPY . .
+
+# Exponer el puerto 80
+EXPOSE 80
+
+# Comando por defecto para iniciar la aplicación
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "80"]
